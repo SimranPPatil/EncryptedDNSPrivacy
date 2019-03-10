@@ -31,7 +31,7 @@ def getCDN(host):
 def findMatch(host, url, request_url, page_url):
     if "1e100.net" in host:
         if "google" in url:
-            return len("1e100.net")
+            return "1e100.net"
     s_pageurl = SequenceMatcher(None, host, page_url).find_longest_match(0, len(host), 0, len(page_url))
     s_url = SequenceMatcher(None, host, url).find_longest_match(0, len(host), 0, len(url))
     s_requrl = SequenceMatcher(None, host, request_url).find_longest_match(0, len(host), 0, len(request_url))
