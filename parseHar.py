@@ -3,7 +3,7 @@ from pprint import pprint
 
 data = {}
 results = []
-with open("har_Firefox_Nightly.json") as f :
+with open("new.json") as f :
     data = json.load(f)
 
 # pprint(data)
@@ -21,5 +21,5 @@ for elem in data["log"]["entries"]:
 # for elem in results:
 #     print "url: " + elem["url"] + "\n" + "ip: " + elem["ip"]
 
-with open("har_ip_url.json", "w") as f:
-    json.dump(results, f) 
+with open("har_ip_url_new.json", "w") as f:
+    json.dump(results, f)

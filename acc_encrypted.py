@@ -4,7 +4,7 @@ import unicodedata
 from difflib import SequenceMatcher
 
 data = []
-with open("har_ip_url.json") as f :
+with open("har_ip_url_new.json") as f :
     data = json.load(f)
 
 cdn = {}
