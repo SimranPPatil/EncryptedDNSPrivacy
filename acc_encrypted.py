@@ -4,7 +4,7 @@ import unicodedata
 from difflib import SequenceMatcher
 
 data = []
-with open("har_ip_url_new.json") as f :
+with open("har_ip_url.json") as f :
     data = json.load(f)
 
 cdn = {}
@@ -45,11 +45,13 @@ print(len(data))
 for d in data:
     try:
         ip = ""
-        ip = (d[u'ip']).encode('ascii','ignore')[1:-1]
+        ip = (d[u'ip']).encode('ascii','ignore')
+        print(ip)
         url = (d[u'url']).encode('ascii','ignore')
         try:
             i += 1
             host = socket.gethostbyaddr(ip)
+            print(host, ip)
             CDN = getCDN(host[0])
             if CDN != "":
                 cdn.setdefault(ip, []).append(CDN)
