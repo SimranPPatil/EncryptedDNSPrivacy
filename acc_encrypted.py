@@ -8,7 +8,7 @@ from pprint import pprint
 data = []
 with open("har_ip_url.json") as f :
     data = json.load(f)
-    
+
 
 cdn = {}
 
@@ -74,7 +74,7 @@ for d in data:
                 ro = RequestObject(geo["host"], geo["ip"], geo["rdns"], geo["isp"])
                 # host = socket.gethostbyaddr(ip)
                 # print(host, ip)
-                CDN = getCDN(ro.isp.lower())
+                CDN = getCDN(ro.isp.lower()+" "+ro.rdns.lower())
                 if CDN != "":
                     cdn.setdefault(ip, []).append(CDN)
                     cdn_score += 1
