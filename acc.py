@@ -2,6 +2,7 @@ import socket
 import json
 import unicodedata
 from difflib import SequenceMatcher
+import requests
 
 data = []
 with open("pjWithIp10000.json") as f:
@@ -13,6 +14,21 @@ cdn = {}
 out = open("manual.csv", "w+")
 line = "ip,host,url\n"
 out.write(line)
+
+class RequestObject(object):
+    host = ""
+    ip = ""
+    rdns = ""
+    isp = ""
+
+    def __init__(self, host, ip, rdns, isp):
+        self.host = host
+        self.ip = ip
+        self.rdns = rdns
+        self.isp = isp
+
+    def __str__(self):
+        return str(self.__dict__)
 
 def getCDN(host):
     cdn = ""
@@ -27,8 +43,9 @@ def getCDN(host):
     elif "amazonaws" in host:
         cdn = "aws"
     return cdn
-
+'''
 def findMatch(host, url, request_url, page_url):
+    print(host, url, request_url, page_url)
     if "1e100.net" in host:
         if "google" in url:
             return "1e100.net"
@@ -48,6 +65,14 @@ def findMatch(host, url, request_url, page_url):
             s = s_requrl
 
     return host[s.a: s.a + s.size]
+'''
+# assuming url, request_url and pageUrl are the same
+def findMatch(host, url):
+    if "1e100.net" in host:
+        if "google" in url:
+            return "1e100.net"
+    s = SequenceMatcher(None, host, url).find_longest_match(0, len(host), 0, len(url))
+    return host[s.a: s.a + s.size]
 
 score = 0
 cdn_score = 0
@@ -55,26 +80,35 @@ i = 0
 for d in data:
     try:
         ip = ""
-        ip = (d[u'dest_ip']).encode('ascii','ignore')[1:-1]
-        url = (d[u'url']).encode('ascii','ignore')
-        request_url = (d[u'request_url']).encode('ascii','ignore')
-        page_url = (d[u'pageUrl']).encode('ascii','ignore')
+        ip = d['dest_ip'][1:-1]
+        url = d['url']
+        request_url = d['request_url'][1:-1]
+        page_url = d['pageUrl']
         try:
+            print(i)
             i += 1
-            host = socket.gethostbyaddr(ip)
-            CDN = getCDN(host[0])
-            if CDN != "":
-                cdn.setdefault(ip, []).append(CDN)
-                cdn_score += 1
-            if len(findMatch(host[0], url, request_url, page_url)) > 4:
-                score += 1
+            web = "https://tools.keycdn.com/geo.json?host="+ip
+            res = requests.get(str(web)).json()
+            if res["status"]  == "success":
+                geo = res["data"]["geo"]
+                ro = RequestObject(geo["host"], geo["ip"], geo["rdns"], geo["isp"])
+                # host = socket.gethostbyaddr(ip)
+                # print(host, ip)
+                CDN = getCDN(ro.isp.lower()+" "+ro.rdns.lower())
+                if CDN != "":
+                    cdn.setdefault(ip, []).append(CDN)
+                    cdn_score += 1
+                if len(findMatch(ro.rdns, url)) > 4:
+                    score += 1
+                else:
+                    # send for manual check
+                    if CDN == "":
+                        line = ip + "," + ro.rdns + "," + url + "\n"
+                        out.write(line)
             else:
-                # send for manual check
-                if CDN == "":
-                    line = ip + "," + host[0] + "," + url + "\n"
-                    out.write(line)
+                print(res["status"])
         except Exception as e:
-            print "Unable to resolve host ", ip
+            print("Unable to resolve host ", ip)
             continue
     except KeyError:
         continue
