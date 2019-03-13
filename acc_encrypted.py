@@ -2,16 +2,35 @@ import socket
 import json
 import unicodedata
 from difflib import SequenceMatcher
+import requests
+from pprint import pprint
 
 data = []
 with open("har_ip_url.json") as f :
     data = json.load(f)
+    
 
 cdn = {}
 
 out = open("manual_encrypted.csv", "w+")
 line = "ip,host,url\n"
 out.write(line)
+
+class RequestObject(object):
+    host = ""
+    ip = ""
+    rdns = ""
+    isp = ""
+
+    def __init__(self, host, ip, rdns, isp):
+        self.host = host
+        self.ip = ip
+        self.rdns = rdns
+        self.isp = isp
+
+    def __str__(self):
+        return str(self.__dict__)
+
 
 # host is the query returned
 # url and ip from the json file
@@ -31,7 +50,6 @@ def getCDN(host):
     return cdn
 
 def findMatch(host, url):
-    print(host, url)
     if "1e100.net" in host:
         if "google" in url:
             return "1e100.net"
@@ -41,30 +59,36 @@ def findMatch(host, url):
 score = 0
 cdn_score = 0
 i = 0
-print(len(data))
+
 for d in data:
     try:
         ip = ""
-        ip = (d[u'ip']).encode('ascii','ignore')
-        print(ip)
-        url = (d[u'url']).encode('ascii','ignore')
+        ip = str((d[u'ip']).encode('ascii','ignore'), 'utf-8')
+        url = str((d[u'url']).encode('ascii','ignore'), 'utf-8')
         try:
             i += 1
-            host = socket.gethostbyaddr(ip)
-            print(host, ip)
-            CDN = getCDN(host[0])
-            if CDN != "":
-                cdn.setdefault(ip, []).append(CDN)
-                cdn_score += 1
-            if len(findMatch(host[0], url)) > 4:
-                score += 1
+            web = "https://tools.keycdn.com/geo.json?host="+ip
+            res = requests.get(str(web)).json()
+            if res["status"]  == "success":
+                geo = res["data"]["geo"]
+                ro = RequestObject(geo["host"], geo["ip"], geo["rdns"], geo["isp"])
+                # host = socket.gethostbyaddr(ip)
+                # print(host, ip)
+                CDN = getCDN(ro.isp.lower())
+                if CDN != "":
+                    cdn.setdefault(ip, []).append(CDN)
+                    cdn_score += 1
+                if len(findMatch(ro.rdns, url)) > 4:
+                    score += 1
+                else:
+                    # send for manual check
+                    if CDN == "":
+                        line = ip + "," + ro.rdns + "," + url + "\n"
+                        out.write(line)
             else:
-                # send for manual check
-                if CDN == "":
-                    line = ip + "," + host[0] + "," + url + "\n"
-                    out.write(line)
+                print(res["status"])
         except Exception as e:
-            print "Unable to resolve host ", ip
+            print("Unable to resolve host ", ip)
             continue
     except KeyError:
         continue
