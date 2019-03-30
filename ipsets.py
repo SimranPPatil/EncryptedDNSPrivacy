@@ -16,10 +16,15 @@ with open("1.json") as f:
         if domain not in domains:
             domains.add(domain)
         
+domain_list = '\n'.join(domains)
+with open("domains.txt", "w") as f:
+    f.write(domain_list)
+
 
 # cat these
 def performQueries(domain_list, domains_to_ip, ip):
-    cmd = 'echo "' + domain_list + '" | zdns A'
+    os.system('export PATH=$PATH:~/go/bin')
+    cmd =  'cat domains.txt | zdns A -retries 10'
     output = os.popen(cmd).readlines()
     for op in output:
         obj = json.loads(op)
@@ -36,6 +41,9 @@ def performQueries(domain_list, domains_to_ip, ip):
         except Exception as e:
             print(e)
 
+performQueries(domain_list, domains_to_ip, ip)
+
+'''
 temp = set()
 num = 0
 while len(domains) > 0:
@@ -48,6 +56,8 @@ while len(domains) > 0:
         temp.clear()
         
 print("here")
+'''
+
 for key in sites_to_domains:
     domain_list = ", ".join(sites_to_domains[key])
     sites_to_domains[key] = domain_list
