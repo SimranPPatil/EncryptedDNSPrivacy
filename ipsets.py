@@ -1,5 +1,4 @@
 import json
-import dns.resolver
 import os
 from urllib.parse import urlparse
 
