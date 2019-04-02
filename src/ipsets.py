@@ -1,12 +1,23 @@
 import json
-import os
+import os, sys
 from urllib.parse import urlparse
+from datetime import datetime
+
+today = str(datetime.now()).split(' ')[0]
+print(today)
+
+if len(sys.argv) != 2:
+    print("Enter in the format: python3 ipsets.py <name of input json file>")
+    exit()
+
+input_json = sys.argv[1]
+os.system("export PATH=$PATH:~/go/bin")
 
 sites_to_domains = dict()
 domains_to_ip = dict()
 ip = dict()
 domains = set()
-with open("1.json") as f:
+with open(input_json) as f:
     for line in f:
         obj = json.loads(line)
         url = urlparse(obj["requestURL"])
@@ -16,14 +27,13 @@ with open("1.json") as f:
             domains.add(domain)
         
 domain_list = '\n'.join(domains)
-with open("domains.txt", "w") as f:
+with open("../output/domains"+today+".txt", "w") as f:
     f.write(domain_list)
 
 
 # cat these
 def performQueries(domain_list, domains_to_ip, ip):
-    os.system('export PATH=$PATH:~/go/bin')
-    cmd =  'cat domains.txt | zdns A -retries 10'
+    cmd =  'cat ../output/domains'+today+'.txt | zdns A -retries 10'
     output = os.popen(cmd).readlines()
     for op in output:
         obj = json.loads(op)
@@ -42,30 +52,15 @@ def performQueries(domain_list, domains_to_ip, ip):
 
 performQueries(domain_list, domains_to_ip, ip)
 
-'''
-temp = set()
-num = 0
-while len(domains) > 0:
-    num += 1
-    temp.add(domains.pop())
-    if num == 500:
-        num = 0
-        domain_list = '\n'.join(temp)
-        performQueries(domain_list, domains_to_ip, ip)
-        temp.clear()
-        
-print("here")
-'''
-
 for key in sites_to_domains:
     domain_list = ", ".join(sites_to_domains[key])
     sites_to_domains[key] = domain_list
 
-with open("sites_to_domains.txt", "w") as f:
+with open("../output/sites_to_domains"+today+".txt", "w") as f:
     json.dump(sites_to_domains, f)
 
-with open("domains_to_ip.txt", "w") as f:
+with open("../output/domains_to_ip"+today+".txt", "w") as f:
     json.dump(domains_to_ip, f)
 
-with open("ip_freq.txt", "w") as f:
+with open("../output/ip_freq"+today+".txt", "w") as f:
     json.dump(ip, f)
