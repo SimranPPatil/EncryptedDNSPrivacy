@@ -37,12 +37,12 @@ for obj in query_job:
         domains.add(domain)
 
 domain_list = '\n'.join(domains)
-with open("../output/domains"+today+".txt", "w") as f:
+with open("../output/domains"+str(table_num)+"_"+today+".txt", "w") as f:
     f.write(domain_list)
 
 # cat these
 def performQueries(domain_list, domains_to_ip, ip):
-    cmd =  'cat ../output/domains'+today+'.txt | zdns A -retries 10'
+    cmd =  'cat ../output/domains'+str(table_num)+'_'+today+'.txt | zdns A -retries 10'
     output = os.popen(cmd).readlines()
     for op in output:
         obj = json.loads(op)
@@ -65,11 +65,11 @@ for key in sites_to_domains:
     domain_list = ", ".join(sites_to_domains[key])
     sites_to_domains[key] = domain_list
 
-with open("../output/sites_to_domains"+today+".txt", "w") as f:
+with open("../output/sites_to_domains"+str(table_num)+"_"+today+".txt", "w") as f:
     json.dump(sites_to_domains, f)
 
-with open("../output/domains_to_ip"+today+".txt", "w") as f:
+with open("../output/domains_to_ip"+str(table_num)+"_"+today+".txt", "w") as f:
     json.dump(domains_to_ip, f)
 
-with open("../output/ip_freq"+today+".txt", "w") as f:
+with open("../output/ip_freq"+str(table_num)+"_"+today+".txt", "w") as f:
     json.dump(ip, f)
