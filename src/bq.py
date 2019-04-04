@@ -17,7 +17,7 @@ print("Table num: ", table_num)
 client = bigquery.Client()
 
 query = (
-    "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 2000000"
+    "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid"
 )
 query_job = client.query(
     query,
