@@ -1,1 +1,1 @@
-{"s.pstatic.net": ["Akamai", "Akamai"], "pm.pstatic.net": ["Akamai", "Akamai"], "ssl.pstatic.net": ["Akamai", "Akamai", "Akamai", "Akamai"]}
+{"pm.pstatic.net": ["Akamai", "Akamai"], "ssl.pstatic.net": ["Akamai", "Akamai", "Akamai", "Akamai"], "s.pstatic.net": ["Akamai", "Akamai"]}

@@ -26,8 +26,9 @@ ip_to_sites = dict()
 domain_to_resources = dict()
 
 with open(input_data) as f:
-    csv_data = csv.reader(f, delimiter=',')
-    for row in csv_data:
+    for row in f:
+        row = row.split(',')
+        print(row)
         url = urlparse(row[3])
         domain = url.netloc
         sites_to_domains.setdefault(row[1],set()).add(domain)
@@ -93,7 +94,7 @@ for ip in ip_to_sites:
         print("len of domains: ", len(domains))
         for domain in domains:
             count_unique += 1
-            cmd = 'docker run -it turbobytes/cdnfinder cdnfindercli --phantomjsbin="/bin/phantomjs" --host ' + str(domain)
+            cmd = 'docker run -it --rm turbobytes/cdnfinder cdnfindercli --phantomjsbin="/bin/phantomjs" --host ' + str(domain)
             output = os.popen(cmd).readlines()
             if len(output[1].strip('\n')) != 0:
                 with_cdn += 1
