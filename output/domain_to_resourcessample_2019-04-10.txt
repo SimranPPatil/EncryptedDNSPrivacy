@@ -1,1 +1,1 @@
-{"ssl.pstatic.net": "Script\n, Image\n", "s.pstatic.net": "Stylesheet\n, Image\n", "l.www.naver.com": "Image\n", "castbox.shopping.naver.com": "Document\n", "pm.pstatic.net": "Script\n"}
+{"ssl.pstatic.net": "Image\n, Script\n", "s.pstatic.net": "Stylesheet\n, Image\n", "l.www.naver.com": "Image\n", "castbox.shopping.naver.com": "Document\n", "pm.pstatic.net": "Script\n"}

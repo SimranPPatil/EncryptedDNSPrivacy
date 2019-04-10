@@ -3,10 +3,11 @@ import os, sys
 from urllib.parse import urlparse
 from datetime import datetime
 import csv
+from shove import Shove
 
 today = str(datetime.now()).split(' ')[0]
 print("Run on: ", today)
-os.system("export PATH=$PATH:~/go/bin")
+os.system("export PATH=$PATH:~/go/bin") # <-- try to fix this 
 
 if len(sys.argv) != 2:
     print("Enter in the format: python3 parse_csv.py <file>")
@@ -32,7 +33,7 @@ with open(input_data) as f:
             break
         lines += 1
         row = row.split(',')
-        #  print(row)
+        # print(row)
         url = urlparse(row[3])
         domain = url.netloc
         sites_to_domains.setdefault(row[1],set()).add(domain)
