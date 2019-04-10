@@ -25,10 +25,14 @@ ip_to_domains = dict()
 ip_to_sites = dict()
 domain_to_resources = dict()
 
+lines = 0
 with open(input_data) as f:
     for row in f:
+        if lines == 100:
+            break
+        lines += 1
         row = row.split(',')
-        print(row)
+        #  print(row)
         url = urlparse(row[3])
         domain = url.netloc
         sites_to_domains.setdefault(row[1],set()).add(domain)
