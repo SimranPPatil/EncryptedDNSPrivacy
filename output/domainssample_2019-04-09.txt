@@ -1,0 +1,5 @@
+pm.pstatic.net
+ssl.pstatic.net
+s.pstatic.net
+castbox.shopping.naver.com
+l.www.naver.com

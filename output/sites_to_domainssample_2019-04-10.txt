@@ -1,0 +1,1 @@
+{"http://naver.com": "pm.pstatic.net, s.pstatic.net, l.www.naver.com, ssl.pstatic.net, castbox.shopping.naver.com"}
