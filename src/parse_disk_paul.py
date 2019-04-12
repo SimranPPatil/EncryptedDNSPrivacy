@@ -30,9 +30,9 @@ domain_to_cdn = shelve.open('domain_to_cdn_'+str(in_name)+"_"+today)
 
 with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
     with open(input_data) as f:
-        reader = csv.reader(f)
-        for row in reader:
+        for row in f:
             try:
+                row = row.split(',')
                 url = urlparse(row[3])
                 domain = url.netloc
                 try: 
@@ -46,8 +46,8 @@ with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
                 domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1]]))
             except Exception as e:
                 print("Exception: ", e)
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                print(row, exc_type, exc_tb.tb_lineno)
+                exc_type, _, exc_tb = sys.exc_info()
+                print(row, exc_type, exc_tb.tb_lineno, "\n\n")
         
 def get_cdn(answer, cdn_map):
     lengths = []
@@ -85,8 +85,8 @@ def performQueries(domain_to_cdn, domains_to_sites, ip_to_domains, ip_to_sites, 
                 print(obj['name'], obj['status'])
         except Exception as e:
             print("Exception: ", e)
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            print(row, exc_type, exc_tb.tb_lineno)
+            exc_type, _, exc_tb = sys.exc_info()
+            print(row, exc_type, exc_tb.tb_lineno , "\n\n")
 
 performQueries(domain_to_cdn, domains_to_sites, ip_to_domains, ip_to_sites, cdn_map)
 
