@@ -16,6 +16,9 @@ table_num = sys.argv[1]
 print("Table num: ", table_num)
 client = bigquery.Client()
 
+# can get object type using a get request -- content header
+# might have to create a tuple with the domain name unparsed and the object type
+
 query = (
     "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 2000000"
 )
