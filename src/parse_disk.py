@@ -30,14 +30,17 @@ domain_to_cdn = shelve.open('domain_to_cdn_'+str(in_name)+"_"+today)
 
 with open(input_data) as f:
     for row in f:
-        row = row.split(',')
-        url = urlparse(row[3])
-        domain = url.netloc
-        domain_to_resources.setdefault(domain, set())
-        domain_to_resources[domain] = domain_to_resources[domain] | set([row[4]])
-        domains["domains"] = domains["domains"] | set([domain])
-        domains_to_sites.setdefault(domain, set())
-        domains_to_sites[domain] = domains_to_sites[domain] | set([row[1]])
+        try:
+            row = row.split(',')
+            url = urlparse(row[3])
+            domain = url.netloc
+            domain_to_resources.setdefault(domain, set())
+            domain_to_resources[domain] = domain_to_resources[domain] | set([row[4]])
+            domains["domains"] = domains["domains"] | set([domain])
+            domains_to_sites.setdefault(domain, set())
+            domains_to_sites[domain] = domains_to_sites[domain] | set([row[1]])
+        except Exception as e:
+            print("Exception: ", e)
         
 domain_list = '\n'.join(domains["domains"])
 with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as f:
