@@ -21,7 +21,6 @@ if len(sys.argv) != 2:
 input_data = sys.argv[1] 
 in_name = input_data.split(".csv")[0].split("/")[-1]
 
-domains = shelve.open('domains_'+str(in_name)+"_"+today)
 domains_to_sites = shelve.open('domains_to_sites_'+str(in_name)+"_"+today)
 ip_to_domains = shelve.open('ip_to_domains_'+str(in_name)+"_"+today)
 ip_to_sites = shelve.open('ip_to_sites_'+str(in_name)+"_"+today)
@@ -43,9 +42,6 @@ with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
                     final.write(line)
                 domain_to_resources.setdefault(domain, set())
                 domain_to_resources[domain] = domain_to_resources[domain].union(set([row[4]]))
-                domains.setdefault("domains", set())
-                domains["domains"] = domains["domains"].union(set([domain]))
-                db = domains["domains"]
                 domains_to_sites.setdefault(domain, set())
                 domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1]]))
             except Exception as e:
