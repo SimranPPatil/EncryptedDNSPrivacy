@@ -52,7 +52,7 @@ with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
                 domain_to_resources.setdefault(domain, set())
                 domain_to_resources[domain] = domain_to_resources[domain].union(set([resource]))
                 domains_to_sites.setdefault(domain, set())
-                domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1]]))
+                domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1].strip("\n")]))
             except Exception as e:
                 print("Exception: ", e)
                 exc_type, _, exc_tb = sys.exc_info()
