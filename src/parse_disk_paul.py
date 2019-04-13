@@ -27,21 +27,30 @@ ip_to_sites = shelve.open('ip_to_sites_'+str(in_name)+"_"+today)
 domain_to_resources = shelve.open('domain_to_resources_'+str(in_name)+"_"+today)
 domain_to_cdn = shelve.open('domain_to_cdn_'+str(in_name)+"_"+today)
 
-
+ind = 0
 with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
     with open(input_data) as f:
         for row in f:
             try:
+                ind += 1
+                if ind == 5000:
+                    break
                 row = row.split(',')
                 url = urlparse(row[3])
                 domain = url.netloc
+                if (len(domain)) == 0:
+                    continue
                 try: 
                     db = domain_to_resources[domain]
                 except KeyError:
                     line = domain + "\n"
                     final.write(line)
+                resource = row[4].strip("\n")
+                if len(resource) > 10:
+                    continue
+        
                 domain_to_resources.setdefault(domain, set())
-                domain_to_resources[domain] = domain_to_resources[domain].union(set([row[4]]))
+                domain_to_resources[domain] = domain_to_resources[domain].union(set([resource]))
                 domains_to_sites.setdefault(domain, set())
                 domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1]]))
             except Exception as e:
