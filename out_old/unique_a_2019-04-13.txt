@@ -1,0 +1,525 @@
+http://canadapostalcodes.net,accounts.google.com,172.217.9.45,{'Document'}, CDN missing 
+http://walter.com,cdn.callrail.com,23.111.8.24,{'Script'},{'MaxCDN'}
+http://jpressonline.com,kiwishopapps.com,107.170.250.186,{'Script', 'Stylesheet'}, CDN missing 
+http://jpressonline.com,app.sesami.co,35.203.119.86,{'Script', 'XHR'}, CDN missing 
+http://aqmat.org,code.jquery.com,205.185.208.52,{'Script', 'Stylesheet', 'Image'},{'Highwinds'}
+http://burlingtoncentre.ca,imgathena.mallfinder.com,52.222.218.194,{'Script'},{'Amazon Cloudfront'}
+http://jpressonline.com,p.yotpo.com,18.223.208.66,{'Image'}, CDN missing 
+http://walter.com,ajax.googleapis.com,216.58.216.106,{'Script', 'Stylesheet'},{'Google'}
+http://jpressonline.com,static-na.payments-amazon.com,52.84.134.254,{'Script'},{'Amazon Cloudfront'}
+http://walter.com,js.hs-scripts.com,104.17.210.204,{'Script'}, CDN missing 
+http://walter.com,js.callrail.com,54.165.108.80,{'XHR'}, CDN missing 
+http://aqmat.org,www.googletagmanager.com,216.58.216.232,{'Script'},{'Google'}
+http://jpressonline.com,settings.luckyorange.net,104.24.11.90,{'Fetch'}, CDN missing 
+http://jpressonline.com,d10lpsik1i8c69.cloudfront.net,52.222.217.159,{'Script'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.9.54,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,216.58.216.214,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,172.217.4.86,{'Image'},{'Google'}
+http://bloggingtories.ca,bloggingtories.ca,54.173.54.90,{'Document', 'Other'}, CDN missing 
+http://mashahir.net,s.update.rubiconproject.com,18.206.103.1,{'Script'},{'Ananke'}
+http://jpressonline.com,pixel.getshogun.com,35.173.6.94,{'Image'},{'ChinaNetCenter'}
+http://mashahir.net,csi.gstatic.com,172.217.8.163,{'Other'}, CDN missing 
+http://mashahir.net,pm.w55c.net,52.41.69.236,{'Image'},{'Akamai'}
+http://mashahir.net,track.eyeviewads.com,54.85.109.204,{'Image'},{'Akamai'}
+http://aqmat.org,cdnjs.cloudflare.com,104.19.196.151,{'Script', 'Stylesheet'}, CDN missing 
+http://funfone.me,funfone.me,104.25.170.11,{'Document', 'Other'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,54.86.99.49,{'Image'},{'Ananke', 'Akamai'}
+http://mashahir.net,px.moatads.com,184.29.94.98,{'Image'},{'Akamai'}
+http://mashahir.net,z.moatads.com,184.29.94.98,{'Script'},{'Akamai'}
+http://wrestlenewz.com,cdn.digitru.st,159.180.84.2,{'Script', 'Document'},{'Instartlogic'}
+http://mashahir.net,mashahirnet.foxpush.net,37.48.86.198,{'Document'}, CDN missing 
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,35.170.227.83,{'Script'},{'Ananke'}
+http://wills-vegan-store.com,static-eu.payments-amazon.com,52.84.27.29,{'Script', 'Document'},{'Amazon Cloudfront'}
+http://walter.com,js.hs-scripts.com,104.17.211.204,{'Script'}, CDN missing 
+http://albertaliberal.com,d3n8a8pro7vhmx.cloudfront.net,52.222.217.187,{'Script', 'Image', 'Other'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.8.182,{'Image'},{'Google'}
+http://jpressonline.com,pixel.getshogun.com,34.196.237.103,{'Image'},{'ChinaNetCenter'}
+http://academyone.ca,d.adroll.com,54.225.179.103,{'Script', 'Image'},{'Akamai'}
+http://mashahir.net,match.adsrvr.org,54.175.5.93,{'Image'},{'Akamai'}
+http://mashahir.net,match.adsrvr.org,54.85.66.230,{'Image'},{'Akamai'}
+http://allseego.com,www.tqlkg.com,8.18.45.85,{'Image'},{'Akamai'}
+http://tradisi-tradisional.blogspot.com,www.gstatic.com,216.58.192.131,{'Script', 'Image'}, CDN missing 
+http://mashahir.net,cs.media.net,184.86.157.168,{'Image'},{'AT&T', 'Akamai'}
+http://mashahir.net,track.eyeviewads.com,52.86.155.250,{'Image'},{'Akamai'}
+http://aqmat.org,cdnjs.cloudflare.com,104.19.197.151,{'Script', 'Stylesheet'}, CDN missing 
+http://funfone.me,funfone.me,104.25.171.11,{'Document', 'Other'}, CDN missing 
+http://49thshelf.com,syndication.twitter.com,104.244.42.200,{'Image', 'Fetch', 'Document'}, CDN missing 
+http://burlingtoncentre.ca,d26jb4otnm96fk.cloudfront.net,52.85.104.194,{'Script'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,static.a-ads.com,148.251.53.118,{'Image'},{'Akamai'}
+http://tradisi-tradisional.blogspot.com,ad.a-ads.com,148.251.53.118,{'Document'}, CDN missing 
+http://wrestlenewz.com,entitlements.jwplayer.com,72.21.81.189,{'XHR'},{'EdgeCast', 'afxcdn.net'}
+http://crmsindonesia.org,vars.hotjar.com,147.75.197.59,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.197.59,{'Script'},{'Google', 'Ananke'}
+http://620ckrm.com,cdn-css.socastsrm.com,52.84.134.228,{'Stylesheet', 'Image'},{'Amazon Cloudfront'}
+http://klinikmatanusantara.com,www.youtube.com,216.58.216.206,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.9.46,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.9.46,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://bioclinicnaturals.com,bioclinicnaturals.com,104.198.49.12,{'XHR', 'Image', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://mashahir.net,cdn.wickplayer.pro,199.101.133.83,{'Script'},{'Ananke'}
+http://tricksway.com,e.dlx.addthis.com,52.42.39.177,{'Image'},{'Ananke', 'Akamai'}
+http://tricksway.com,e.dlx.addthis.com,54.186.136.33,{'Image'},{'Ananke', 'Akamai'}
+http://walter.com,ajax.googleapis.com,172.217.9.74,{'Script', 'Stylesheet'},{'Google'}
+http://jpressonline.com,nulls.solutions,198.199.81.55,{'Script'}, CDN missing 
+http://walter.com,js.hs-scripts.com,104.17.212.204,{'Script'}, CDN missing 
+http://walter.com,js.callrail.com,34.200.206.232,{'XHR'}, CDN missing 
+http://walter.com,js.hs-analytics.net,104.17.67.176,{'Script'}, CDN missing 
+http://aqmat.org,i.ytimg.com,216.58.192.150,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,172.217.0.22,{'Image'},{'Google'}
+http://mashahir.net,s.update.rubiconproject.com,34.236.21.3,{'Script'},{'Ananke'}
+http://mashahir.net,s.update.rubiconproject.com,52.203.32.250,{'Script'},{'Ananke'}
+http://wrestlenewz.com,jwpltx.com,34.195.231.192,{'Image'}, CDN missing 
+http://wrestlenewz.com,jwpltx.com,34.227.137.128,{'Image'}, CDN missing 
+http://jpressonline.com,pixel.getshogun.com,3.92.108.98,{'Image'},{'ChinaNetCenter'}
+http://academyone.ca,d.adroll.com,54.243.117.175,{'Script', 'Image'},{'Akamai'}
+http://mashahir.net,pm.w55c.net,34.217.173.93,{'Image'},{'Akamai'}
+http://mashahir.net,match.adsrvr.org,54.210.189.82,{'Image'},{'Akamai'}
+http://mashahir.net,p.rfihub.com,199.38.167.129,{'Image'},{'Ananke', 'Akamai'}
+http://aqmat.org,cdnjs.cloudflare.com,104.19.198.151,{'Script', 'Stylesheet'}, CDN missing 
+http://620ckrm.com,rules.quantcount.com,52.222.218.187,{'Script'},{'Amazon Cloudfront'}
+http://walter.com,walter.com,75.98.143.30,{'Document'}, CDN missing 
+http://walter.com,www.walter.com,75.98.143.30,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'}, CDN missing 
+http://canadapostalcodes.net,canadapostalcodes.net,104.31.88.249,{'Document'}, CDN missing 
+http://canadapostalcodes.net,www.canadapostalcodes.net,104.31.88.249,{'Script', 'Stylesheet', 'Font', 'Other'}, CDN missing 
+http://wills-vegan-store.com,payments-uk.amazon.com,54.239.33.119,{'Script'}, CDN missing 
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.8.174,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.8.174,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://tricksway.com,e.dlx.addthis.com,54.187.224.233,{'Image'},{'Ananke', 'Akamai'}
+http://jpressonline.com,kiwishopapps.com,198.199.118.82,{'Script', 'Stylesheet'}, CDN missing 
+http://burlingtoncentre.ca,imgathena.mallfinder.com,52.222.218.100,{'Script'},{'Amazon Cloudfront'}
+http://ymcacky.org,use.fontawesome.com,23.111.9.35,{'Script', 'Stylesheet', 'Font'},{'MaxCDN'}
+http://jpressonline.com,static-na.payments-amazon.com,52.84.134.86,{'Script'},{'Amazon Cloudfront'}
+http://walter.com,js.hs-scripts.com,104.17.213.204,{'Script'}, CDN missing 
+http://walter.com,js.hs-analytics.net,104.17.68.176,{'Script'}, CDN missing 
+http://canada-immigration-info.ca,bat.bing.com,204.79.197.200,{'Script', 'Image'},{'Akamai'}
+http://wrestlenewz.com,jwpltx.com,34.199.235.23,{'Image'}, CDN missing 
+http://jpressonline.com,pixel.getshogun.com,52.72.250.2,{'Image'},{'ChinaNetCenter'}
+http://mashahir.net,pm.w55c.net,35.166.212.195,{'Image'},{'Akamai'}
+http://yardlinespecialevents.com,d.la2-c2-ph2.salesforceliveagent.com,13.110.0.102,{'Script'},{'Google'}
+http://mashahir.net,match.adsrvr.org,18.213.125.20,{'Image'},{'Akamai'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,216.58.192.142,{'Image', 'XHR', 'Document'},{'Google'}
+http://aqmat.org,cdnjs.cloudflare.com,104.19.199.151,{'Script', 'Stylesheet'}, CDN missing 
+http://620ckrm.com,widget.ldrhub.com,54.236.157.206,{'Script'},{'Ananke'}
+http://620ckrm.com,api.ldrhub.com,54.236.157.206,{'Fetch'},{'Ananke'}
+http://620ckrm.com,static.ldrhub.com,54.236.157.206,{'Image'},{'Ananke'}
+http://wrestlenewz.com,d1r0hbgnong92o.cloudfront.net,52.222.217.200,{'Script'}, CDN missing 
+http://wildminds.ning.com,wildminds.ning.com,208.82.16.68,{'Document', 'XHR', 'Other'}, CDN missing 
+http://canadapostalcodes.net,canadapostalcodes.net,104.31.89.249,{'Document'}, CDN missing 
+http://canadapostalcodes.net,www.canadapostalcodes.net,104.31.89.249,{'Script', 'Stylesheet', 'Font', 'Other'}, CDN missing 
+http://willaca.com,willaca.com,107.180.34.197,{'Image', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://albertaliberal.com,albertaliberal.com,96.45.82.241,{'Document'}, CDN missing 
+http://620ckrm.com,static.doubleclick.net,172.217.0.6,{'Script'},{'Google'}
+http://wrestlenewz.com,platform.twitter.com,192.229.163.25,{'Script', 'Stylesheet', 'Image', 'Document'},{'EdgeCast', 'Akamai'}
+http://banksdc.com,um.simpli.fi,169.60.66.35,{'Image'}, CDN missing 
+http://walter.com,ajax.googleapis.com,172.217.5.10,{'Script', 'Stylesheet'},{'Google'}
+http://walter.com,ajax.googleapis.com,216.58.192.170,{'Script', 'Stylesheet'},{'Google'}
+http://walter.com,js.hs-scripts.com,104.17.214.204,{'Script'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,resources.blogblog.com,216.58.192.233,{'Image'},{'Google'}
+http://tradisi-tradisional.blogspot.com,www.blogger.com,216.58.192.233,{'Document'},{'Google'}
+http://albertaliberal.com,d3n8a8pro7vhmx.cloudfront.net,52.222.217.30,{'Script', 'Image', 'Other'}, CDN missing 
+http://wills-vegan-store.com,fls-na.amazon.com,34.232.204.33,{'XHR'},{'Ananke'}
+http://wills-vegan-store.com,fls-na.amazon.com,54.88.34.154,{'XHR'},{'Ananke'}
+http://jpressonline.com,s3-eu-west-1.amazonaws.com,52.218.48.84,{'Script'}, CDN missing 
+http://walter.com,js.hs-analytics.net,104.17.69.176,{'Script'}, CDN missing 
+http://burlingtoncentre.ca,stats.mezzobit.com,52.71.182.79,{'Image'},{'Akamai'}
+http://wrestlenewz.com,jwpltx.com,52.1.20.79,{'Image'}, CDN missing 
+http://academyone.ca,d.adroll.com,54.243.62.79,{'Script', 'Image'},{'Akamai'}
+http://wildminds.ning.com,www.sc.pages05.net,74.112.69.165,{'Script'}, CDN missing 
+http://yardlinespecialevents.com,d.la2-c2-ph2.salesforceliveagent.com,13.110.1.102,{'Script'},{'Google'}
+http://mashahir.net,match.adsrvr.org,34.232.188.164,{'Image'},{'Akamai'}
+http://620ckrm.com,d1gm7n6w0pishx.cloudfront.net,52.222.217.102,{'Script', 'Stylesheet', 'Font', 'Document'}, CDN missing 
+http://mashahir.net,px.adhigh.net,64.58.116.236,{'Image'},{'TurboBytes'}
+http://burlingtoncentre.ca,d2xe6f7535uyas.cloudfront.net,52.222.217.120,{'Image'}, CDN missing 
+http://tricksway.com,gravatar.com,192.0.80.240,{'Image'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,54.87.174.42,{'Image'},{'Ananke', 'Akamai'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,216.58.192.206,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,216.58.192.206,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://620ckrm.com,js-agent.newrelic.com,151.101.186.110,{'Script'},{'Fastly'}
+http://pageborders.org,pageborders.org,208.100.53.7,{'Image', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,tradisi-tradisional.blogspot.com,172.217.6.97,{'Other', 'Script', 'Document'},{'Google'}
+http://yardlinespecialevents.com,yardlinespecialevents.com,67.227.224.253,{'Document'}, CDN missing 
+http://yardlinespecialevents.com,www.yardlinespecialevents.com,67.227.224.253,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'},{'TurboBytes'}
+http://wildminds.ning.com,badges.wegohealth.com,159.203.113.11,{'Script'},{'Ananke'}
+http://walter.com,certify.alexametrics.com,52.222.218.199,{'Image'}, CDN missing 
+http://walter.com,ajax.googleapis.com,216.58.192.234,{'Script', 'Stylesheet'},{'Google'}
+http://walter.com,ajax.googleapis.com,172.217.1.42,{'Script', 'Stylesheet'},{'Google'}
+http://wills-vegan-store.com,fls-na.amazon.com,34.233.2.145,{'XHR'},{'Ananke'}
+http://jpressonline.com,productreviews.shopifycdn.com,151.101.184.104,{'Script', 'Stylesheet'},{'Fastly'}
+http://jpressonline.com,cdn.shopify.com,151.101.184.104,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'},{'Fastly', 'Ananke'}
+http://jpressonline.com,d1fidecqhnmd5.cloudfront.net,52.222.217.112,{'Script', 'Stylesheet', 'XHR'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.9.86,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,216.58.216.246,{'Image'},{'Google'}
+http://walter.com,assets.adobedtm.com,184.29.93.115,{'Script', 'Document'},{'Ananke', 'Akamai'}
+http://jpressonline.com,cdn.jsdelivr.net,104.16.85.20,{'Script', 'Stylesheet'},{'Cloudflare', 'TurboBytes'}
+http://mashahir.net,s.update.rubiconproject.com,18.232.225.110,{'Script'},{'Ananke'}
+http://mashahir.net,s.update.rubiconproject.com,52.204.218.201,{'Script'},{'Ananke'}
+http://academyone.ca,d.adroll.com,54.225.203.103,{'Script', 'Image'},{'Akamai'}
+http://620ckrm.com,api.socastsrm.com,52.87.44.139,{'XHR'}, CDN missing 
+http://wrestlenewz.com,i.clean.gg,35.236.211.40,{'XHR'}, CDN missing 
+http://tricksway.com,gravatar.com,192.0.80.241,{'Image'}, CDN missing 
+http://mashahir.net,eu-sonar.sociomantic.com,148.251.87.142,{'Image'}, CDN missing 
+http://crmsindonesia.org,vars.hotjar.com,147.75.77.221,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.77.221,{'Script'},{'Google', 'Ananke'}
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,52.20.250.191,{'Script'},{'Ananke'}
+http://army.gc.ca,army.gc.ca,131.137.250.202,{'Image', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://walter.com,www.webtraxs.com,52.20.173.205,{'Script', 'Image'},{'Akamai'}
+http://willaca.com,monumento.co,173.236.225.174,{'Script'}, CDN missing 
+http://jpressonline.com,coin.amazonpay.com,52.46.129.106,{'XHR'}, CDN missing 
+http://jpressonline.com,app.backinstock.org,104.24.117.187,{'Script'}, CDN missing 
+http://banksdc.com,aa.agkn.com,63.251.88.56,{'Image'}, CDN missing 
+http://banksdc.com,um.simpli.fi,169.55.104.49,{'Image'}, CDN missing 
+http://walter.com,ajax.googleapis.com,172.217.4.202,{'Script', 'Stylesheet'},{'Google'}
+http://walter.com,ajax.googleapis.com,172.217.8.170,{'Script', 'Stylesheet'},{'Google'}
+http://xbizmiami.com,img.xbiz.com,45.79.149.238,{'Image'}, CDN missing 
+http://crmsindonesia.org,www.facebook.com,157.240.18.35,{'Script', 'Image', 'XHR', 'Document'},{'Ananke'}
+http://tradisi-tradisional.blogspot.com,xl-trk.com,88.208.41.104,{'Image'}, CDN missing 
+http://wills-vegan-store.com,fls-na.amazon.com,35.168.132.61,{'XHR'},{'Ananke'}
+http://wills-vegan-store.com,fls-na.amazon.com,54.89.207.10,{'XHR'},{'Ananke'}
+http://walter.com,d31qbv1cthcecs.cloudfront.net,52.222.218.121,{'Script'}, CDN missing 
+http://jpressonline.com,discounter.ms.wallsh.com,34.216.83.135,{'XHR'}, CDN missing 
+http://walter.com,static.olark.com,72.21.91.42,{'Script', 'Stylesheet', 'Document'},{'afxcdn.net'}
+http://jpressonline.com,connect.nosto.com,52.222.218.138,{'Script', 'XHR'}, CDN missing 
+http://walter.com,api.olark.com,35.190.13.95,{'Script'}, CDN missing 
+http://academyone.ca,a.adroll.com,23.50.52.218,{'Script'},{'Akamai'}
+http://wrestlenewz.com,bw-list-general.s3.amazonaws.com,52.216.161.147,{'XHR'},{'Akamai'}
+http://jpressonline.com,cdn.jsdelivr.net,104.16.86.20,{'Script', 'Stylesheet'},{'Cloudflare', 'TurboBytes'}
+http://wrestlenewz.com,jwpltx.com,52.1.141.105,{'Image'}, CDN missing 
+http://jpressonline.com,pixel.getshogun.com,52.21.103.149,{'Image'},{'ChinaNetCenter'}
+http://academyone.ca,d.adroll.com,23.21.86.176,{'Script', 'Image'},{'Akamai'}
+http://mashahir.net,pm.w55c.net,52.41.138.237,{'Image'},{'Akamai'}
+http://wildminds.ning.com,storage.ning.com,205.185.216.42,{'Script', 'Image'},{'Highwinds'}
+http://wildminds.ning.com,api.ning.com,205.185.216.42,{'Stylesheet', 'Image'},{'Highwinds'}
+http://wildminds.ning.com,static.ning.com,205.185.216.42,{'Stylesheet', 'Image'},{'Highwinds'}
+http://620ckrm.com,api.socastsrm.com,52.73.222.41,{'XHR'}, CDN missing 
+http://wrestlenewz.com,malsup.github.io,185.199.109.153,{'Script'}, CDN missing 
+http://wrestlenewz.com,malsup.github.io,185.199.110.153,{'Script'}, CDN missing 
+http://mashahir.net,match.adsrvr.org,52.54.239.213,{'Image'},{'Akamai'}
+http://mashahir.net,mmpww.com,142.93.167.30,{'Image'}, CDN missing 
+http://mashahir.net,px.adhigh.net,204.74.252.20,{'Image'},{'TurboBytes'}
+http://mashahir.net,px.adhigh.net,204.74.252.28,{'Image'},{'TurboBytes'}
+http://burlingtoncentre.ca,d2xe6f7535uyas.cloudfront.net,52.222.217.67,{'Image'}, CDN missing 
+http://burlingtoncentre.ca,d2xe6f7535uyas.cloudfront.net,52.222.217.166,{'Image'}, CDN missing 
+http://tricksway.com,gravatar.com,192.0.80.242,{'Image'}, CDN missing 
+http://mashahir.net,track.eyeviewads.com,34.193.148.83,{'Image'},{'Akamai'}
+http://mashahir.net,eu-sonar.sociomantic.com,176.9.45.13,{'Image'}, CDN missing 
+http://mashahir.net,eu-sonar.sociomantic.com,176.9.151.213,{'Image'}, CDN missing 
+http://burlingtoncentre.ca,images.shoptopia.com,52.222.218.93,{'Image'},{'Amazon Cloudfront'}
+http://tradisi-tradisional.blogspot.com,cdn.ampproject.org,216.58.216.193,{'Script'},{'Google'}
+http://mashahir.net,ads.yieldmo.com,18.235.40.247,{'Image'},{'Ananke', 'Akamai'}
+http://mashahir.net,token.rubiconproject.com,8.43.72.57,{'Image'},{'Akamai'}
+http://burlingtoncentre.ca,cdn01.mzbcdn.net,52.222.221.190,{'Script'}, CDN missing 
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,52.205.16.151,{'Script'},{'Ananke'}
+http://wills-vegan-store.com,wills-vegan-store.com,78.129.190.70,{'Image', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://albertaliberal.com,www.albertaliberal.com,104.91.167.34,{'Script', 'Stylesheet'},{'Ananke', 'Akamai'}
+http://academyone.ca,academyone.ca,23.101.169.175,{'Image', 'Stylesheet', 'Other', 'Script', 'Document'}, CDN missing 
+http://jpressonline.com,payments.amazon.com,54.239.29.46,{'Script', 'XHR'}, CDN missing 
+http://klinikmatanusantara.com,www.youtube.com,172.217.6.110,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.8.206,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.8.206,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://arnprior.ca,arnprior.ca,50.116.77.98,{'Image', 'XHR', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://tricksway.com,e.dlx.addthis.com,52.88.61.249,{'Image'},{'Ananke', 'Akamai'}
+http://ymcacky.org,fast.fonts.net,93.184.216.182,{'Script'},{'afxcdn.net'}
+http://walter.com,js.usemessages.com,104.17.235.204,{'Script'}, CDN missing 
+http://49thshelf.com,tpc.googlesyndication.com,172.217.0.1,{'Image', 'XHR', 'Other', 'Script', 'Document'},{'Google'}
+http://jpressonline.com,api.tagtray.com,146.88.138.42,{'Script'},{'MaxCDN'}
+http://arnprior.ca,addsearch.com,54.174.193.21,{'Script'}, CDN missing 
+http://walter.com,log.olark.com,130.211.38.145,{'Image'},{'Blue Hat Network'}
+http://walter.com,nrpc.olark.com,130.211.38.145,{'Script', 'XHR'},{'Blue Hat Network'}
+http://wills-vegan-store.com,static-eu.payments-amazon.com,52.84.27.27,{'Script', 'Document'},{'Amazon Cloudfront'}
+http://walter.com,ajax.googleapis.com,172.217.0.10,{'Script', 'Stylesheet'},{'Google'}
+http://jpressonline.com,sociallogin-3cb0.kxcdn.com,68.70.205.1,{'Script'},{'KeyCDN'}
+http://620ckrm.com,media.socastsrm.com,99.84.127.50,{'Image', 'Other'},{'Amazon Cloudfront'}
+http://620ckrm.com,media.socastsrm.com,99.84.127.76,{'Image', 'Other'},{'Amazon Cloudfront'}
+http://620ckrm.com,media.socastsrm.com,99.84.127.5,{'Image', 'Other'},{'Amazon Cloudfront'}
+http://wills-vegan-store.com,fls-na.amazon.com,107.23.28.24,{'XHR'},{'Ananke'}
+http://jpressonline.com,settings.luckyorange.net,104.24.10.90,{'Fetch'}, CDN missing 
+http://jpressonline.com,connect.nosto.com,52.222.218.193,{'Script', 'XHR'}, CDN missing 
+http://banksdc.com,tag.simpli.fi,169.55.1.118,{'Script'}, CDN missing 
+http://aqmat.org,www.google.com,216.58.216.68,{'Script', 'Stylesheet', 'Image', 'Document'}, CDN missing 
+http://jpressonline.com,d1fidecqhnmd5.cloudfront.net,52.222.217.42,{'Script', 'Stylesheet', 'XHR'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.5.22,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,216.58.192.182,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,216.58.216.86,{'Image'},{'Google'}
+http://jpressonline.com,cdn.jsdelivr.net,104.16.87.20,{'Script', 'Stylesheet'},{'Cloudflare', 'TurboBytes'}
+http://mashahir.net,s.update.rubiconproject.com,18.205.200.12,{'Script'},{'Ananke'}
+http://jpressonline.com,ajax.aspnetcdn.com,152.199.4.33,{'Script'},{'Windows Azure', 'afxcdn.net'}
+http://wrestlenewz.com,jwpltx.com,34.200.179.210,{'Image'}, CDN missing 
+http://academyone.ca,d.adroll.com,54.243.34.202,{'Script', 'Image'},{'Akamai'}
+http://wrestlenewz.com,malsup.github.io,185.199.111.153,{'Script'}, CDN missing 
+http://yardlinespecialevents.com,d.la2-c2-ph2.salesforceliveagent.com,13.110.2.230,{'Script'},{'Google'}
+http://burlingtoncentre.ca,d1xt1d7ohag766.cloudfront.net,52.222.217.15,{'Image'}, CDN missing 
+http://mashahir.net,track.eyeviewads.com,34.236.230.194,{'Image'},{'Akamai'}
+http://mashahir.net,track.eyeviewads.com,52.72.188.174,{'Image'},{'Akamai'}
+http://aqmat.org,cdnjs.cloudflare.com,104.19.195.151,{'Script', 'Stylesheet'}, CDN missing 
+http://burlingtoncentre.ca,images.shoptopia.com,52.222.218.41,{'Image'},{'Amazon Cloudfront'}
+http://burlingtoncentre.ca,imgathena.mallfinder.com,52.222.218.41,{'Script'},{'Amazon Cloudfront'}
+http://49thshelf.com,syndication.twitter.com,104.244.42.8,{'Image', 'Fetch', 'Document'}, CDN missing 
+http://burlingtoncentre.ca,d26jb4otnm96fk.cloudfront.net,52.85.104.57,{'Script'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,54.173.25.235,{'Image'},{'Ananke', 'Akamai'}
+http://mashahir.net,token.rubiconproject.com,8.43.72.67,{'Image'},{'Akamai'}
+http://mashahir.net,sync-tm.everesttech.net,151.101.186.49,{'Image'},{'Fastly', 'Ananke'}
+http://crmsindonesia.org,vars.hotjar.com,147.75.78.123,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.78.123,{'Script'},{'Google', 'Ananke'}
+http://crmsindonesia.org,vars.hotjar.com,147.75.77.43,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.77.43,{'Script'},{'Google', 'Ananke'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.247,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.247,{'Image'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.229,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.229,{'Image'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.238,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.238,{'Image'},{'SwiftServe', 'Internap'}
+http://goldsgym.ae,pbs.twimg.com,72.21.91.70,{'Image'},{'EdgeCast', 'Akamai'}
+http://wrestlenewz.com,d1r0hbgnong92o.cloudfront.net,52.222.217.77,{'Script'}, CDN missing 
+http://620ckrm.com,cdn-css.socastsrm.com,52.84.134.253,{'Stylesheet', 'Image'},{'Amazon Cloudfront'}
+http://albertaliberal.com,www.albertaliberal.com,104.91.167.79,{'Script', 'Stylesheet'},{'Ananke', 'Akamai'}
+http://burlingtoncentre.ca,burlingtoncentre.ca,192.96.159.128,{'Image', 'XHR', 'Stylesheet', 'Other', 'Script', 'Document'}, CDN missing 
+http://albertaliberal.com,albertaliberal.com,96.45.82.83,{'Document'}, CDN missing 
+http://condalab.com,condalab.com,185.166.214.201,{'Document'}, CDN missing 
+http://condalab.com,www.condalab.com,185.166.214.201,{'Script', 'Stylesheet', 'Image', 'Other'},{'Ananke'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.4.238,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.4.238,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://crmsindonesia.org,crmsindonesia.org,192.185.29.152,{'Image', 'XHR', 'Stylesheet', 'Font', 'Other', 'Script', 'Document'}, CDN missing 
+http://jpressonline.com,clk.anticlickfraudsystem.com,109.226.13.230,{'Script'}, CDN missing 
+http://albertaliberal.com,albertaliberal.nationbuilder.com,23.47.222.232,{'Script', 'Stylesheet', 'Font'},{'Ananke', 'Akamai'}
+http://tricksway.com,e.dlx.addthis.com,54.149.190.58,{'Image'},{'Ananke', 'Akamai'}
+http://walter.com,js.usemessages.com,104.17.236.204,{'Script'}, CDN missing 
+http://jpressonline.com,sociallogin-3cb0.kxcdn.com,68.70.205.2,{'Script'},{'KeyCDN'}
+http://walter.com,d31qbv1cthcecs.cloudfront.net,52.222.218.51,{'Script'}, CDN missing 
+http://jpressonline.com,connect.nosto.com,52.222.218.240,{'Script', 'XHR'}, CDN missing 
+http://army.gc.ca,www.stats3.forces.gc.ca,131.137.250.250,{'Script', 'Image'}, CDN missing 
+http://jpressonline.com,d10lpsik1i8c69.cloudfront.net,52.222.217.25,{'Script'}, CDN missing 
+http://jpressonline.com,d10lpsik1i8c69.cloudfront.net,52.222.217.124,{'Script'}, CDN missing 
+http://jpressonline.com,d10lpsik1i8c69.cloudfront.net,52.222.217.214,{'Script'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.6.22,{'Image'},{'Google'}
+http://aqmat.org,i.ytimg.com,172.217.1.54,{'Image'},{'Google'}
+http://jpressonline.com,d8sfokcjiy6.cloudfront.net,52.222.217.34,{'Script'}, CDN missing 
+http://jpressonline.com,cdn.jsdelivr.net,104.16.88.20,{'Script', 'Stylesheet'},{'Cloudflare', 'TurboBytes'}
+http://mashahir.net,s.update.rubiconproject.com,34.230.152.154,{'Script'},{'Ananke'}
+http://jpressonline.com,pixel.getshogun.com,52.22.145.207,{'Image'},{'ChinaNetCenter'}
+http://academyone.ca,d.adroll.com,54.243.36.199,{'Script', 'Image'},{'Akamai'}
+http://wrestlenewz.com,cdn.intermarkets.net,208.111.171.251,{'Script'},{'Limelight'}
+http://academyone.ca,bid.g.doubleclick.net,209.85.147.154,{'Document'},{'Google'}
+http://mashahir.net,pm.w55c.net,34.218.160.212,{'Image'},{'Akamai'}
+http://mashahir.net,pm.w55c.net,52.10.135.193,{'Image'},{'Akamai'}
+http://bioclinicnaturals.com,s.swiftypecdn.com,151.101.184.143,{'Script', 'Stylesheet', 'XHR'},{'Fastly'}
+http://burlingtoncentre.ca,d1xt1d7ohag766.cloudfront.net,52.222.217.133,{'Image'}, CDN missing 
+http://wrestlenewz.com,content.jwplatform.com,52.222.218.213,{'Script', 'XHR', 'Image'}, CDN missing 
+http://mashahir.net,px.adhigh.net,64.58.119.156,{'Image'},{'TurboBytes'}
+http://mashahir.net,track.eyeviewads.com,54.173.255.95,{'Image'},{'Akamai'}
+http://mashahir.net,track.eyeviewads.com,18.204.72.204,{'Image'},{'Akamai'}
+http://mashahir.net,eu-sonar.sociomantic.com,78.46.128.235,{'Image'}, CDN missing 
+http://yardlinespecialevents.com,seal.thawte.com,23.4.119.181,{'Script'},{'Akamai', 'Alimama'}
+http://49thshelf.com,syndication.twitter.com,104.244.42.72,{'Image', 'Fetch', 'Document'}, CDN missing 
+http://620ckrm.com,620ckrm.com,54.84.131.112,{'Document'}, CDN missing 
+http://620ckrm.com,www.620ckrm.com,54.84.131.112,{'Script', 'Stylesheet', 'XHR', 'Image'},{'Ananke'}
+http://620ckrm.com,rules.quantcount.com,52.222.218.6,{'Script'},{'Amazon Cloudfront'}
+http://wrestlenewz.com,img.onesignal.com,104.16.204.165,{'Image'}, CDN missing 
+http://wrestlenewz.com,onesignal.com,104.16.204.165,{'Script', 'Stylesheet', 'Fetch', 'Document'}, CDN missing 
+http://bioclinicnaturals.com,cc.swiftype.com,169.48.138.204,{'Image'},{'SwiftCDN'}
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,34.226.120.217,{'Script'},{'Ananke'}
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,52.54.218.210,{'Script'},{'Ananke'}
+http://albertaliberal.com,cdn.symbolset.com,23.111.9.67,{'Script'},{'MaxCDN'}
+http://3dobleu.co,3dobleu.co,104.28.24.153,{'Document', 'Other'}, CDN missing 
+http://albertaliberal.com,albertaliberal.com,96.45.83.119,{'Document'}, CDN missing 
+http://albertaliberal.com,albertaliberal.com,96.45.83.173,{'Document'}, CDN missing 
+http://tricksway.com,tricksway.com,104.24.114.49,{'Document'}, CDN missing 
+http://tricksway.com,www.tricksway.com,104.24.114.49,{'Script', 'Stylesheet', 'Image', 'Font'}, CDN missing 
+http://klinikmatanusantara.com,www.youtube-nocookie.com,216.58.192.174,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,216.58.192.174,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.5.14,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.5.14,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://mashahir.net,cdn.wickplayer.pro,199.101.133.2,{'Script'},{'Ananke'}
+http://walter.com,certify.alexametrics.com,52.222.218.115,{'Image'}, CDN missing 
+http://jpressonline.com,v.shopify.com,35.238.82.97,{'Image'},{'Ananke'}
+http://walter.com,js.usemessages.com,104.17.237.204,{'Script'}, CDN missing 
+http://jpressonline.com,api.revy.io,104.28.20.194,{'Script'}, CDN missing 
+http://klinikmatanusantara.com,s.ytimg.com,216.58.192.238,{'Script', 'Stylesheet'},{'Google'}
+http://jpressonline.com,sociallogin-3cb0.kxcdn.com,68.70.205.3,{'Script'},{'KeyCDN'}
+http://walter.com,js.callrail.com,18.211.27.81,{'XHR'}, CDN missing 
+http://620ckrm.com,media.socastsrm.com,99.84.127.25,{'Image', 'Other'},{'Amazon Cloudfront'}
+http://jpressonline.com,static.klaviyo.com,151.101.186.133,{'Script'},{'Fastly'}
+http://jpressonline.com,fast.a.klaviyo.com,151.101.186.133,{'Script', 'XHR'},{'Fastly'}
+http://academyone.ca,a.adroll.com,23.50.52.185,{'Script'},{'Akamai'}
+http://burlingtoncentre.ca,stats.mezzobit.com,54.161.160.142,{'Image'},{'Akamai'}
+http://pageborders.org,i.pinimg.com,23.4.11.103,{'Image'},{'Akamai', 'TurboBytes', 'Ananke', 'Alimama'}
+http://pageborders.org,assets.pinterest.com,23.4.11.103,{'Script'},{'Ananke', 'TurboBytes', 'Akamai', 'Alimama'}
+http://aqmat.org,i.ytimg.com,172.217.4.214,{'Image'},{'Google'}
+http://jpressonline.com,cdn.jsdelivr.net,104.16.89.20,{'Script', 'Stylesheet'},{'Cloudflare', 'TurboBytes'}
+http://mashahir.net,s.update.rubiconproject.com,34.227.198.227,{'Script'},{'Ananke'}
+http://mashahir.net,s.update.rubiconproject.com,52.4.135.155,{'Script'},{'Ananke'}
+http://tradisi-tradisional.blogspot.com,sync.users-api.com,31.172.81.242,{'Script'}, CDN missing 
+http://wrestlenewz.com,jwpltx.com,52.200.42.178,{'Image'}, CDN missing 
+http://jpressonline.com,pixel.getshogun.com,34.226.180.131,{'Image'},{'ChinaNetCenter'}
+http://jpressonline.com,pixel.getshogun.com,34.232.181.106,{'Image'},{'ChinaNetCenter'}
+http://academyone.ca,bid.g.doubleclick.net,209.85.147.155,{'Document'},{'Google'}
+http://mashahir.net,pm.w55c.net,52.24.218.7,{'Image'},{'Akamai'}
+http://wildminds.ning.com,storage.ning.com,205.185.216.10,{'Script', 'Image'},{'Highwinds'}
+http://wildminds.ning.com,api.ning.com,205.185.216.10,{'Stylesheet', 'Image'},{'Highwinds'}
+http://wildminds.ning.com,static.ning.com,205.185.216.10,{'Stylesheet', 'Image'},{'Highwinds'}
+http://mashahir.net,match.adsrvr.org,107.21.47.27,{'Image'},{'Akamai'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.6.14,{'Image', 'XHR', 'Document'},{'Google'}
+http://burlingtoncentre.ca,d1xt1d7ohag766.cloudfront.net,52.222.217.224,{'Image'}, CDN missing 
+http://tricksway.com,beacon.walmart.com,161.170.239.188,{'Image'},{'Akamai'}
+http://mashahir.net,eu-sonar.sociomantic.com,78.46.128.236,{'Image'}, CDN missing 
+http://49thshelf.com,syndication.twitter.com,104.244.42.136,{'Image', 'Fetch', 'Document'}, CDN missing 
+http://mashahir.net,cdn.foxpush.net,104.24.18.29,{'Script', 'Stylesheet'}, CDN missing 
+http://banksdc.com,dni.bozzuto.com,52.72.190.23,{'Script'}, CDN missing 
+http://wrestlenewz.com,img.onesignal.com,104.16.205.165,{'Image'}, CDN missing 
+http://wrestlenewz.com,onesignal.com,104.16.205.165,{'Script', 'Stylesheet', 'Fetch', 'Document'}, CDN missing 
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,54.209.219.69,{'Script'},{'Ananke'}
+http://wrestlenewz.com,d1r0hbgnong92o.cloudfront.net,52.222.217.125,{'Script'}, CDN missing 
+http://3dobleu.co,3dobleu.co,104.28.25.153,{'Document', 'Other'}, CDN missing 
+http://tricksway.com,tricksway.com,104.24.115.49,{'Document'}, CDN missing 
+http://tricksway.com,www.tricksway.com,104.24.115.49,{'Script', 'Stylesheet', 'Image', 'Font'}, CDN missing 
+http://klinikmatanusantara.com,www.youtube.com,172.217.1.46,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://walter.com,js.usemessages.com,104.17.238.204,{'Script'}, CDN missing 
+http://jpressonline.com,api.revy.io,104.28.21.194,{'Script'}, CDN missing 
+http://jpressonline.com,p.yotpo.com,18.221.184.104,{'Image'}, CDN missing 
+http://walter.com,ajax.googleapis.com,172.217.8.202,{'Script', 'Stylesheet'},{'Google'}
+http://jpressonline.com,sociallogin-3cb0.kxcdn.com,68.70.205.4,{'Script'},{'KeyCDN'}
+http://jpressonline.com,staticw2.yotpo.com,23.47.217.114,{'Script', 'Stylesheet'},{'Cachefly', 'Akamai'}
+http://albertaliberal.com,d3n8a8pro7vhmx.cloudfront.net,52.222.217.126,{'Script', 'Image', 'Other'}, CDN missing 
+http://jpressonline.com,static.ctctcdn.com,23.40.36.248,{'Script'},{'Ananke', 'Akamai'}
+http://banksdc.com,tag.simpli.fi,169.44.76.92,{'Script'}, CDN missing 
+http://jpressonline.com,d8sfokcjiy6.cloudfront.net,52.222.217.207,{'Script'}, CDN missing 
+http://mashahir.net,s.update.rubiconproject.com,18.206.130.128,{'Script'},{'Ananke'}
+http://academyone.ca,bid.g.doubleclick.net,209.85.147.156,{'Document'},{'Google'}
+http://mashahir.net,pm.w55c.net,35.160.42.83,{'Image'},{'Akamai'}
+http://burlingtoncentre.ca,d26jb4otnm96fk.cloudfront.net,52.85.104.214,{'Script'}, CDN missing 
+http://mashahir.net,cdn.foxpush.net,104.24.19.29,{'Script', 'Stylesheet'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,54.210.236.153,{'Image'},{'Ananke', 'Akamai'}
+http://wrestlenewz.com,acdn.adnxs.com,151.101.185.108,{'Script'},{'Fastly'}
+http://wrestlenewz.com,img.onesignal.com,104.16.206.165,{'Image'}, CDN missing 
+http://wrestlenewz.com,onesignal.com,104.16.206.165,{'Script', 'Stylesheet', 'Fetch', 'Document'}, CDN missing 
+http://wrestlenewz.com,www.themix.net,104.27.144.36,{'Script', 'Stylesheet', 'Image', 'Other'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,st-n.ads5-adnow.com,92.223.96.96,{'Image'},{'G-core'}
+http://tradisi-tradisional.blogspot.com,st-n.ads1-adnow.com,92.223.96.96,{'Script'},{'G-core'}
+http://tradisi-tradisional.blogspot.com,cdn.user-api.com,92.223.96.96,{'Image'},{'G-core'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.251,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.251,{'Image'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.242,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.242,{'Image'},{'SwiftServe', 'Internap'}
+http://jpressonline.com,cdn.getshogun.com,52.222.218.26,{'Script'},{'Amazon Cloudfront'}
+http://mashahir.net,mashahir.net,104.18.56.133,{'Document'}, CDN missing 
+http://mashahir.net,www.mashahir.net,104.18.56.133,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'}, CDN missing 
+http://jpressonline.com,jpressonline.com,23.227.38.32,{'XHR', 'Document'}, CDN missing 
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.4.206,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.4.206,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://xxxhq.com,www.xxxhq.com,195.228.254.190,{'Stylesheet', 'Other'}, CDN missing 
+http://xxxhq.com,xxxhq.com,195.228.254.190,{'Document'}, CDN missing 
+http://walter.com,js.usemessages.com,104.17.239.204,{'Script'}, CDN missing 
+http://banksdc.com,aa.agkn.com,156.154.200.36,{'Image'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,xl-trk.com,88.208.41.101,{'Image'}, CDN missing 
+http://jpressonline.com,static-na.payments-amazon.com,52.84.134.132,{'Script'},{'Amazon Cloudfront'}
+http://wills-vegan-store.com,fls-na.amazon.com,18.214.236.42,{'XHR'},{'Ananke'}
+http://walter.com,d31qbv1cthcecs.cloudfront.net,52.222.218.63,{'Script'}, CDN missing 
+http://aqmat.org,fonts.gstatic.com,216.58.216.99,{'Font'},{'Google'}
+http://canada-immigration-info.ca,bat.bing.com,13.107.21.200,{'Script', 'Image'},{'Akamai'}
+http://620ckrm.com,weather.gc.ca,205.189.10.43,{'Script', 'Stylesheet', 'Image', 'Document'}, CDN missing 
+http://tradisi-tradisional.blogspot.com,n.ads1-adnow.com,31.172.81.226,{'Script', 'Image'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.4.54,{'Image'},{'Google'}
+http://condalab.com,ssl.google-analytics.com,216.58.192.168,{'Script', 'Image'},{'Google'}
+http://wrestlenewz.com,jwpltx.com,34.236.4.254,{'Image'}, CDN missing 
+http://academyone.ca,d.adroll.com,54.243.78.178,{'Script', 'Image'},{'Akamai'}
+http://wrestlenewz.com,ssl.p.jwpcdn.com,72.21.81.48,{'Script'},{'afxcdn.net'}
+http://academyone.ca,bid.g.doubleclick.net,209.85.147.157,{'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,216.58.216.110,{'Image', 'XHR', 'Document'},{'Google'}
+http://wrestlenewz.com,content.jwplatform.com,52.222.218.162,{'Script', 'XHR', 'Image'}, CDN missing 
+http://burlingtoncentre.ca,d2xe6f7535uyas.cloudfront.net,52.222.217.109,{'Image'}, CDN missing 
+http://crmsindonesia.org,sjs.bizographics.com,23.47.218.222,{'Script'},{'Cachefly', 'Akamai'}
+http://burlingtoncentre.ca,d26jb4otnm96fk.cloudfront.net,52.85.104.35,{'Script'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,35.168.84.158,{'Image'},{'Ananke', 'Akamai'}
+http://mashahir.net,token.rubiconproject.com,8.43.72.27,{'Image'},{'Akamai'}
+http://620ckrm.com,widget.ldrhub.com,34.225.36.53,{'Script'},{'Ananke'}
+http://620ckrm.com,api.ldrhub.com,34.225.36.53,{'Fetch'},{'Ananke'}
+http://620ckrm.com,static.ldrhub.com,34.225.36.53,{'Image'},{'Ananke'}
+http://620ckrm.com,rules.quantcount.com,52.222.218.9,{'Script'},{'Amazon Cloudfront'}
+http://mashahir.net,pixel-a.sitescout.com,209.15.36.34,{'Image'}, CDN missing 
+http://crmsindonesia.org,vars.hotjar.com,147.75.76.93,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.76.93,{'Script'},{'Google', 'Ananke'}
+http://wrestlenewz.com,img.onesignal.com,104.16.207.165,{'Image'}, CDN missing 
+http://wrestlenewz.com,onesignal.com,104.16.207.165,{'Script', 'Stylesheet', 'Fetch', 'Document'}, CDN missing 
+http://620ckrm.com,connect.soundcloud.com,52.222.218.243,{'Script'},{'Amazon Cloudfront'}
+http://wrestlenewz.com,www.themix.net,104.27.145.36,{'Script', 'Stylesheet', 'Image', 'Other'}, CDN missing 
+http://banksdc.com,hello.myfonts.net,13.32.237.84,{'Stylesheet'},{'Amazon Cloudfront'}
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,54.152.111.238,{'Script'},{'Ananke'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.243,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.243,{'Image'},{'SwiftServe', 'Internap'}
+http://jpressonline.com,cdn.getshogun.com,52.222.218.81,{'Script'},{'Amazon Cloudfront'}
+http://banksdc.com,banksdc.com,54.201.27.156,{'Document'}, CDN missing 
+http://banksdc.com,www.banksdc.com,54.201.27.156,{'Image', 'Stylesheet', 'Font', 'Media', 'Other', 'Script'},{'Ananke'}
+http://mashahir.net,mashahir.net,104.18.57.133,{'Document'}, CDN missing 
+http://mashahir.net,www.mashahir.net,104.18.57.133,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'}, CDN missing 
+http://walter.com,www.webtraxs.com,34.192.59.169,{'Script', 'Image'},{'Akamai'}
+http://wills-vegan-store.com,m.media-amazon.com,52.85.100.193,{'Script', 'Stylesheet'},{'Ananke'}
+http://jpressonline.com,analytics.getshogun.com,151.101.186.217,{'Script'},{'Fastly'}
+http://walter.com,certify.alexametrics.com,52.222.218.82,{'Image'}, CDN missing 
+http://banksdc.com,um.simpli.fi,169.61.103.241,{'Image'}, CDN missing 
+http://wills-vegan-store.com,static-eu.payments-amazon.com,52.84.27.222,{'Script', 'Document'},{'Amazon Cloudfront'}
+http://tradisi-tradisional.blogspot.com,xl-trk.com,88.208.41.102,{'Image'}, CDN missing 
+http://pageborders.org,widgets.pinterest.com,151.101.184.84,{'Script'},{'Fastly'}
+http://pageborders.org,log.pinterest.com,151.101.184.84,{'Script'},{'Fastly'}
+http://jpressonline.com,static-na.payments-amazon.com,52.84.134.124,{'Script'},{'Amazon Cloudfront'}
+http://jpressonline.com,my.justuno.com,104.28.26.164,{'Script', 'XHR'}, CDN missing 
+http://jpressonline.com,cdn.justuno.com,104.28.26.164,{'Script', 'Stylesheet'}, CDN missing 
+http://jpressonline.com,analytics.justuno.com,104.28.26.164,{'Script', 'XHR'}, CDN missing 
+http://jpressonline.com,scripttags.justuno.com,104.28.26.164,{'Script'}, CDN missing 
+http://wills-vegan-store.com,fls-na.amazon.com,34.231.151.167,{'XHR'},{'Ananke'}
+http://jpressonline.com,discounter.ms.wallsh.com,35.162.8.45,{'XHR'}, CDN missing 
+http://jpressonline.com,connect.nosto.com,52.222.218.163,{'Script', 'XHR'}, CDN missing 
+http://walter.com,js.hs-analytics.net,104.17.70.176,{'Script'}, CDN missing 
+http://620ckrm.com,weather.gc.ca,205.189.10.44,{'Script', 'Stylesheet', 'Image', 'Document'}, CDN missing 
+http://jpressonline.com,d1fidecqhnmd5.cloudfront.net,52.222.217.74,{'Script', 'Stylesheet', 'XHR'}, CDN missing 
+http://620ckrm.com,graph.facebook.com,157.240.18.15,{'Image'},{'Ananke'}
+http://tricksway.com,gravatar.com,192.0.80.239,{'Image'}, CDN missing 
+http://mashahir.net,s0.2mdn.net,216.58.216.102,{'Script', 'Image'},{'Google'}
+http://mashahir.net,track.eyeviewads.com,107.23.232.59,{'Image'},{'Akamai'}
+http://mashahir.net,eu-sonar.sociomantic.com,148.251.43.51,{'Image'}, CDN missing 
+http://burlingtoncentre.ca,images.shoptopia.com,52.222.218.127,{'Image'},{'Amazon Cloudfront'}
+http://aqmat.org,cdn.polyfill.io,151.101.186.109,{'Script'},{'Fastly'}
+http://wrestlenewz.com,img.onesignal.com,104.16.208.165,{'Image'}, CDN missing 
+http://wrestlenewz.com,onesignal.com,104.16.208.165,{'Script', 'Stylesheet', 'Fetch', 'Document'}, CDN missing 
+http://620ckrm.com,secure.quantserve.com,192.184.69.253,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.253,{'Image'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,secure.quantserve.com,192.184.69.244,{'Script'},{'SwiftServe', 'Internap'}
+http://620ckrm.com,pixel.quantserve.com,192.184.69.244,{'Image'},{'SwiftServe', 'Internap'}
+http://klinikmatanusantara.com,www.youtube-nocookie.com,172.217.4.46,{'Image', 'XHR', 'Document'},{'Google'}
+http://klinikmatanusantara.com,www.youtube.com,172.217.4.46,{'Image', 'XHR', 'Stylesheet', 'Script', 'Document'},{'Google'}
+http://mashahir.net,ads.yieldmo.com,54.175.27.201,{'Image'},{'Ananke', 'Akamai'}
+http://620ckrm.com,cdn-js.socastsrm.com,52.222.218.253,{'Script'},{'Amazon Cloudfront'}
+http://crmsindonesia.org,vars.hotjar.com,147.75.77.255,{'Document'},{'Google', 'Ananke'}
+http://crmsindonesia.org,static.hotjar.com,147.75.77.255,{'Script'},{'Google', 'Ananke'}
+http://jpressonline.com,pressure-cooker-shopify.herokuapp.com,54.236.102.155,{'Script'},{'Ananke'}
+http://wrestlenewz.com,d1r0hbgnong92o.cloudfront.net,52.222.217.173,{'Script'}, CDN missing 
+http://620ckrm.com,cdn-css.socastsrm.com,52.84.134.115,{'Stylesheet', 'Image'},{'Amazon Cloudfront'}
+http://620ckrm.com,cdn-css.socastsrm.com,52.84.134.205,{'Stylesheet', 'Image'},{'Amazon Cloudfront'}
+http://yardlinespecialevents.com,c.la2-c1-dfw.salesforceliveagent.com,136.147.59.59,{'Script'},{'Google'}
+http://yardlinespecialevents.com,c.la2-c1-dfw.salesforceliveagent.com,136.147.57.187,{'Script'},{'Google'}
+http://aqmat.org,aqmat.org,67.205.125.24,{'Document'}, CDN missing 
+http://aqmat.org,www.aqmat.org,67.205.125.24,{'Image', 'Stylesheet', 'Font', 'Other', 'Script'},{'CDN77'}
+http://walter.com,code.visitor-track.com,208.106.251.28,{'Script'}, CDN missing 
+http://jpressonline.com,app.backinstock.org,104.24.116.187,{'Script'}, CDN missing 
+http://wills-vegan-store.com,static-eu.payments-amazon.com,52.84.27.106,{'Script', 'Document'},{'Amazon Cloudfront'}
+http://walter.com,ajax.googleapis.com,172.217.9.42,{'Script', 'Stylesheet'},{'Google'}
+http://walter.com,ajax.googleapis.com,172.217.4.74,{'Script', 'Stylesheet'},{'Google'}
+http://tradisi-tradisional.blogspot.com,xl-trk.com,88.208.41.103,{'Image'}, CDN missing 
+http://jpressonline.com,my.justuno.com,104.28.27.164,{'Script', 'XHR'}, CDN missing 
+http://jpressonline.com,cdn.justuno.com,104.28.27.164,{'Script', 'Stylesheet'}, CDN missing 
+http://jpressonline.com,analytics.justuno.com,104.28.27.164,{'Script', 'XHR'}, CDN missing 
+http://jpressonline.com,scripttags.justuno.com,104.28.27.164,{'Script'}, CDN missing 
+http://albertaliberal.com,d3n8a8pro7vhmx.cloudfront.net,52.222.217.237,{'Script', 'Image', 'Other'}, CDN missing 
+http://walter.com,js.hs-analytics.net,104.17.71.176,{'Script'}, CDN missing 
+http://jpressonline.com,d1fidecqhnmd5.cloudfront.net,52.222.217.165,{'Script', 'Stylesheet', 'XHR'}, CDN missing 
+http://aqmat.org,i.ytimg.com,172.217.8.214,{'Image'},{'Google'}
+http://pageborders.org,getdpd.com,104.198.14.52,{'Script'}, CDN missing 
+http://wildminds.ning.com,static.ads-twitter.com,151.101.184.157,{'Script'},{'Fastly'}
+http://wrestlenewz.com,malsup.github.io,185.199.108.153,{'Script'}, CDN missing 
+http://mashahir.net,ads.yieldmo.com,34.198.87.119,{'Image'},{'Ananke', 'Akamai'}
+http://mashahir.net,token.rubiconproject.com,8.43.72.47,{'Image'},{'Akamai'}
+http://620ckrm.com,rules.quantcount.com,52.222.218.38,{'Script'},{'Amazon Cloudfront'}
+http://620ckrm.com,connect.soundcloud.com,52.222.218.245,{'Script'},{'Amazon Cloudfront'}
+http://banksdc.com,i.simpli.fi,169.55.104.40,{'Script'}, CDN missing 
+http://yardlinespecialevents.com,c.la2-c1-dfw.salesforceliveagent.com,136.147.58.187,{'Script'},{'Google'}
+http://xbizmiami.com,xbizmiami.com,166.78.106.196,{'Document'}, CDN missing 
+http://xbizmiami.com,www.xbizmiami.com,166.78.106.196,{'Image', 'Stylesheet', 'Font', 'Media', 'Other', 'Script'}, CDN missing 
+http://wrestlenewz.com,wrestlenewz.com,216.55.170.8,{'Document'}, CDN missing 
+http://walter.com,www.webtraxs.com,34.233.38.153,{'Script', 'Image'},{'Akamai'}

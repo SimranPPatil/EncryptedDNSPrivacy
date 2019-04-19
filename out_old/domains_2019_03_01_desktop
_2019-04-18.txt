@@ -1,0 +1,4 @@
+cnf.http.or.kr
+flowerhappiness.kr
+fonts.gstatic.com
+ssl.http.or.kr

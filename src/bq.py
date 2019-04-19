@@ -1,78 +1,125 @@
 from google.cloud import bigquery
 import json
-import os, sys
+import os, sys, requests
 from urllib.parse import urlparse
 from datetime import datetime
+from difflib import SequenceMatcher
 
 today = str(datetime.now()).split(' ')[0]
 print("Run on: ", today)
-os.system("export PATH=$PATH:~/go/bin")
 
-if len(sys.argv) != 2:
-    print("Enter in the format: python3 ipsets.py <table_num>")
-    exit()
+cdn_map = []
+with open('cnamechain.json') as f:
+    cdn_map = json.load(f)
 
-table_num = sys.argv[1]
-print("Table num: ", table_num)
-client = bigquery.Client()
+def get_cdn(answer, cdn_map):
+    lengths = []
+    for key in cdn_map:
+        match = SequenceMatcher(None, key[0], answer).find_longest_match(0, len(key[0]), 0, len(answer))
+        lengths.append(len(key[0][match.a: match.a + match.size]))
+    maxLen = max(lengths)
+    index = lengths.index(maxLen)
+    return cdn_map[index][1]
 
-# can get object type using a get request -- content header
-# might have to create a tuple with the domain name unparsed and the object type
+# export GOOGLE_APPLICATION_CREDENTIALS="[PATH]"
 
-query = (
-    "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 2000000"
-)
-query_job = client.query(
-    query,
-    location="US",
-) 
+def generate_data(table_num):
+    client = bigquery.Client()
+    query = (
+        "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 2000000 " 
+    )
+    query_job = client.query(
+        query,
+        location="US",
+    ) 
 
-sites_to_domains = dict()
-domains_to_ip = dict()
-ip = dict()
-domains = set()
+    domains = set()
+    ip_to_domains = dict()
+    ip_to_sites = dict()
+    domain_to_resources = dict()
+    domain_to_cdn = dict()
+    domain_to_site = dict()
+    
+    for obj in query_job:
+        try:  
+            url = urlparse(obj["requestURL"])
+            domain = url.netloc
+            site = obj['siteURL']
+            domain_to_site.setdefault(domain, set()).add(site)
+            r = requests.get(obj["requestURL"])
+            resource = r.headers['Content-Type']
+            print(domain, resource)
+            domain_to_resources.setdefault(domain, set()).add(resource)
+            if domain not in domains:
+                domains.add(domain)
+        except Exception as e:
+            print("Exception: ", e)
+            exc_type, _, exc_tb = sys.exc_info()
+            print(exc_type, exc_tb.tb_lineno, "\n\n")
 
-for obj in query_job:  
-    url = urlparse(obj["requestURL"])
-    domain = url.netloc
-    sites_to_domains.setdefault(obj['siteURL'],set()).add(domain)
-    if domain not in domains:
-        domains.add(domain)
+    print("WRITING DOMAINS TO FILE: ", len(domains))
+    domain_list = '\n'.join(domains)
+    filename = "domainlist"
+    with open(filename, "w+") as f:
+        f.write(domain_list)
 
-domain_list = '\n'.join(domains)
-with open("../output/domains"+str(table_num)+"_"+today+".txt", "w") as f:
-    f.write(domain_list)
-
-# cat these
-def performQueries(domain_list, domains_to_ip, ip):
-    cmd =  'cat ../output/domains'+str(table_num)+'_'+today+'.txt | zdns A -retries 10'
+    # perform queries
+    print("STARTING ZDNS\n")
+    cmd =  'cat ' + filename + ' | ~/go/bin/zdns A -retries 10'
     output = os.popen(cmd).readlines()
     for op in output:
         obj = json.loads(op)
         try:
             domain = obj['name']
+            site = domain_to_site[domain]
+            site = next(iter(site))
             if obj['status'] == 'NOERROR':
                 answers = obj['data']['answers']
                 for answer in answers:
-                    domains_to_ip.setdefault(domain, []).append(answer['answer'])
-                    ip.setdefault(answer['answer'], 0)
-                    ip[answer['answer']] += 1
+                    if answer["type"] == "CNAME":
+                        answer_ret = answer["answer"]
+                        cdn = get_cdn(answer_ret, cdn_map)
+                        domain_to_cdn.setdefault(domain, set()).add(cdn)
+                    elif answer["type"] == "A":
+                        ip = answer["answer"]
+                        ip_to_domains.setdefault(ip, set()).add(domain)
+                        ip_to_sites.setdefault(ip, set()).add(site)
             else:
-                domains_to_ip[domain] = obj['status']
+                print(obj['name'], obj['status'])
         except Exception as e:
-            print(e)
+            print("Exception: ", e)
+            exc_type, _, exc_tb = sys.exc_info()
+            print(exc_type, exc_tb.tb_lineno, "\n\n")
 
-performQueries(domain_list, domains_to_ip, ip)
+    count_unique = 0
+    with_cdn = 0
+    potential = 0
 
-for key in sites_to_domains:
-    domain_list = ", ".join(sites_to_domains[key])
-    sites_to_domains[key] = domain_list
+    print("WRITING FINAL OUTPUT\n")
+    with open("../output/unique_"+str(table_num)+"_"+today+".txt", "w") as f:
+        for ip in ip_to_sites:
+            if len(ip_to_sites[ip]) == 1:
+                # here the ip is unique
+                domains = ip_to_domains[ip]
+                for domain in domains:
+                    count_unique += 1
+                    try:
+                        cdn = domain_to_cdn[domain]
+                        with_cdn += 1
+                        line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain])+ "," + str(domain_to_cdn[domain]) + "\n"
+                        f.write(line)
+                    except KeyError:
+                        potential += 1
+                        line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain]) + ", CDN missing \n"
+                        f.write(line)
+                    
+    print("count_unique: ", count_unique)
+    print("cdn present: ", with_cdn)
+    print("potential: ", potential)
 
-with open("../output/sites_to_domains"+str(table_num)+"_"+today+".txt", "w") as f:
-    json.dump(sites_to_domains, f)
+    return
 
-with open("../output/domains_to_ip"+str(table_num)+"_"+today+".txt", "w") as f:
-    json.dump(domains_to_ip, f)
-
-with open("../output/ip_freq"+str(table_num)+"_"+today+".txt", "w") as f:
-    json.dump(ip, f)
+with open("tables") as table_file:
+    for table_num in table_file:
+        print("TABLE: ", table_num.strip('\n'))
+        generate_data(table_num.strip('\n'))

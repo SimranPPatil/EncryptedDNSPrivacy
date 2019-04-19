@@ -1,0 +1,11 @@
+http://naver.com,l.www.naver.com,210.89.168.139,{'Image\n'}, CDN missing 
+http://naver.com,l.www.naver.com,210.89.170.11,{'Image\n'}, CDN missing 
+http://naver.com,l.www.naver.com,125.209.218.79,{'Image\n'}, CDN missing 
+http://naver.com,castbox.shopping.naver.com,210.89.164.54,{'Document\n'},{'Akamai'}
+http://naver.com,castbox.shopping.naver.com,210.89.160.70,{'Document\n'},{'Akamai'}
+http://naver.com,ssl.pstatic.net,96.17.64.253,{'Script\n', 'Image\n'},{'Akamai', 'Cachefly'}
+http://naver.com,s.pstatic.net,96.17.65.14,{'Stylesheet\n', 'Image\n'},{'Akamai', 'Cachefly'}
+http://naver.com,pm.pstatic.net,96.17.65.14,{'Script\n'},{'Akamai', 'Cachefly'}
+http://naver.com,l.www.naver.com,210.89.171.11,{'Image\n'}, CDN missing 
+http://naver.com,l.www.naver.com,210.89.172.9,{'Image\n'}, CDN missing 
+http://naver.com,l.www.naver.com,125.209.230.195,{'Image\n'}, CDN missing 
