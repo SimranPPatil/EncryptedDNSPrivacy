@@ -1,5 +1,5 @@
 from google.cloud import bigquery
-import json
+import json, time
 import os, sys, requests
 from urllib.parse import urlparse
 from datetime import datetime
@@ -45,8 +45,20 @@ def generate_data(table_num):
             url = urlparse(obj["requestURL"])
             domain = url.netloc
             site = obj['siteURL']
-            domain_to_site.setdefault(domain, set()).add(site)
-            r = requests.get(obj["requestURL"].strip('\n'), timeout=(5,5))
+            start = time.time()
+            TO = 10
+            body = []
+            flag = False
+            r = requests.get(obj["requestURL"].strip('\n'), timeout=(5,5), stream = True)
+            for chunk in r.iter_content(1024):
+                body.append(chunk)
+                if time.time() > (start + TO):
+                    print("body: ", len(body), "\n")
+                    flag = True
+                    break
+            if flag:
+                continue
+            domain_to_site.setdefault(domain, set()).add(site)            
             resource = r.headers['Content-Type']
             print(domain, resource)
             domain_to_resources.setdefault(domain, set()).add(resource)
