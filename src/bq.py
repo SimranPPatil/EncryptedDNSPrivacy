@@ -26,7 +26,7 @@ def get_cdn(answer, cdn_map):
 def generate_data(table_num):
     client = bigquery.Client()
     query = (
-        "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 2000000 " 
+        "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 " 
     )
     query_job = client.query(
         query,
@@ -46,7 +46,7 @@ def generate_data(table_num):
             domain = url.netloc
             site = obj['siteURL']
             domain_to_site.setdefault(domain, set()).add(site)
-            r = requests.get(obj["requestURL"])
+            r = requests.get(obj["requestURL"].strip('\n'), timeout=(5,5))
             resource = r.headers['Content-Type']
             print(domain, resource)
             domain_to_resources.setdefault(domain, set()).add(resource)
