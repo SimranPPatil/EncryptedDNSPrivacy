@@ -24,6 +24,8 @@ def get_cdn(answer, cdn_map):
 # export GOOGLE_APPLICATION_CREDENTIALS="[PATH]"
 
 def generate_data(table_num):
+    filename = "domainlist_" + table_num
+    domainlist = open(filename, "w+")
     client = bigquery.Client()
     query = (
         "SELECT pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 " 
@@ -33,7 +35,6 @@ def generate_data(table_num):
         location="US",
     ) 
 
-    domains = set()
     ip_to_domains = dict()
     ip_to_sites = dict()
     domain_to_resources = dict()
@@ -58,23 +59,21 @@ def generate_data(table_num):
                     break
             if flag:
                 continue
+            try: 
+                _ = domain_to_site[domain]
+            except KeyError:
+                line = domain.strip("\n") + "\n"
+                domainlist.write(line)
             domain_to_site.setdefault(domain, set()).add(site)            
             resource = r.headers['Content-Type']
             print(domain, resource)
             domain_to_resources.setdefault(domain, set()).add(resource)
-            if domain not in domains:
-                domains.add(domain)
         except Exception as e:
             print("Exception: ", e)
             exc_type, _, exc_tb = sys.exc_info()
             print(exc_type, exc_tb.tb_lineno, "\n\n")
 
-    print("WRITING DOMAINS TO FILE: ", len(domains))
-    domain_list = '\n'.join(domains)
-    filename = "domainlist"
-    with open(filename, "w+") as f:
-        f.write(domain_list)
-
+    domainlist.close()
     # perform queries
     print("STARTING ZDNS\n")
     cmd =  'cat ' + filename + ' | ~/go/bin/zdns A -retries 10'
