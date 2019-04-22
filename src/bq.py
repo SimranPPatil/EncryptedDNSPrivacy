@@ -45,6 +45,8 @@ def generate_data(table_num):
         try:  
             url = urlparse(obj["requestURL"])
             domain = url.netloc
+            if (len(domain)) == 0:
+                continue
             site = obj['siteURL']
             start = time.time()
             TO = 10
@@ -121,8 +123,13 @@ def generate_data(table_num):
                         f.write(line)
                     except KeyError:
                         potential += 1
-                        line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain]) + ", CDN missing \n"
-                        f.write(line)
+                        try:
+                            line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain]) + ", CDN missing \n"
+                            f.write(line)
+                        except Exception as e:
+                            print("Exception: ", e)
+                            exc_type, _, exc_tb = sys.exc_info()
+                            print(exc_type, exc_tb.tb_lineno, "\n\n")
                     
     print("count_unique: ", count_unique)
     print("cdn present: ", with_cdn)
