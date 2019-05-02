@@ -6,6 +6,7 @@ import csv
 import shelve
 from difflib import SequenceMatcher
 
+
 today = str(datetime.now()).split(' ')[0]
 print("Run on: ", today)
 
@@ -20,32 +21,43 @@ if len(sys.argv) != 2:
 input_data = sys.argv[1] 
 in_name = input_data.split(".csv")[0].split("/")[-1]
 
-domains = shelve.open('domains_'+str(in_name)+"_"+today)
-domains["domains"] = set()
 domains_to_sites = shelve.open('domains_to_sites_'+str(in_name)+"_"+today)
 ip_to_domains = shelve.open('ip_to_domains_'+str(in_name)+"_"+today)
 ip_to_sites = shelve.open('ip_to_sites_'+str(in_name)+"_"+today)
 domain_to_resources = shelve.open('domain_to_resources_'+str(in_name)+"_"+today)
 domain_to_cdn = shelve.open('domain_to_cdn_'+str(in_name)+"_"+today)
 
-with open(input_data) as f:
-    for row in f:
-        try:
-            row = row.split(',')
-            url = urlparse(row[3])
-            domain = url.netloc
-            domain_to_resources.setdefault(domain, set())
-            domain_to_resources[domain] = domain_to_resources[domain] | set([row[4]])
-            domains["domains"] = domains["domains"] | set([domain])
-            domains_to_sites.setdefault(domain, set())
-            domains_to_sites[domain] = domains_to_sites[domain] | set([row[1]])
-        except Exception as e:
-            print("Exception: ", e)
+ind = 0
+with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as final:
+    with open(input_data) as f:
+        for row in f:
+            try:
+                ind += 1
+                if ind == 5000:
+                    break
+                row = row.split(',')
+                url = urlparse(row[3])
+                domain = url.netloc
+                if (len(domain)) == 0:
+                    continue
+                try: 
+                    db = domain_to_resources[domain]
+                except KeyError:
+                    line = domain + "\n"
+                    final.write(line)
+                resource = row[4].strip("\n")
+                if len(resource) > 10:
+                    continue
         
-domain_list = '\n'.join(domains["domains"])
-with open("../output/domains_"+str(in_name)+"_"+today+".txt", "w") as f:
-    f.write(domain_list)
-
+                domain_to_resources.setdefault(domain, set())
+                domain_to_resources[domain] = domain_to_resources[domain].union(set([resource]))
+                domains_to_sites.setdefault(domain, set())
+                domains_to_sites[domain] = domains_to_sites[domain].union(set([row[1].strip("\n")]))
+            except Exception as e:
+                print("Exception: ", e)
+                exc_type, _, exc_tb = sys.exc_info()
+                print(row, exc_type, exc_tb.tb_lineno, "\n\n")
+        
 def get_cdn(answer, cdn_map):
     lengths = []
     for key in cdn_map:
@@ -71,17 +83,19 @@ def performQueries(domain_to_cdn, domains_to_sites, ip_to_domains, ip_to_sites, 
                         answer_ret = answer["answer"]
                         cdn = get_cdn(answer_ret, cdn_map)
                         domain_to_cdn.setdefault(domain, set())
-                        domain_to_cdn[domain] = domain_to_cdn[domain] | set([cdn])
+                        domain_to_cdn[domain] = domain_to_cdn[domain].union(set([cdn]))
                     elif answer["type"] == "A":
                         ip = answer["answer"]
                         ip_to_domains.setdefault(ip, set())
-                        ip_to_domains[ip] = ip_to_domains[ip] | set([domain])
+                        ip_to_domains[ip] = ip_to_domains[ip].union(set([domain]))
                         ip_to_sites.setdefault(ip, set())
-                        ip_to_sites[ip] = ip_to_sites[ip] | set([site])
+                        ip_to_sites[ip] = ip_to_sites[ip].union(set([site]))
             else:
                 print(obj['name'], obj['status'])
         except Exception as e:
             print("Exception: ", e)
+            exc_type, _, exc_tb = sys.exc_info()
+            print(row, exc_type, exc_tb.tb_lineno , "\n\n")
 
 performQueries(domain_to_cdn, domains_to_sites, ip_to_domains, ip_to_sites, cdn_map)
 
@@ -95,7 +109,6 @@ with open("../output/unique_"+str(in_name)+"_"+today+".txt", "w") as f:
             # here the ip is unique
             domains = ip_to_domains[ip]
             for domain in domains:
-                print("d: ", domain)
                 count_unique += 1
                 try:
                     cdn = domain_to_cdn[domain]
