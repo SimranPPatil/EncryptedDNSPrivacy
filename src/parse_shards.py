@@ -94,13 +94,13 @@ for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
         # perform queries
         print("STARTING ZDNS\n")
         print(filename)
-        cmd =  'cat ' + filename + ' | ~/go/bin/zdns A -retries 10'
+        cmd =  'cat ' + filename + ' | ~/go/bin/zdns A -retries 2'
         output = os.popen(cmd).readlines()
         for op in output:
             obj = json.loads(op)
             try:
-                print("hi")
                 domain = obj['name']
+                print(domain)
                 site = domain_to_site[domain]
                 site = next(iter(site))
                 if obj['status'] == 'NOERROR':
