@@ -98,6 +98,7 @@ for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
         for op in output:
             obj = json.loads(op)
             try:
+                print("hi")
                 domain = obj['name']
                 site = domain_to_site[domain]
                 site = next(iter(site))
