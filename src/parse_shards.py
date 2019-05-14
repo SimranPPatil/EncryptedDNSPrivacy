@@ -93,6 +93,7 @@ for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
 
         # perform queries
         print("STARTING ZDNS\n")
+        print(filename)
         cmd =  'cat ' + filename + ' | ~/go/bin/zdns A -retries 10'
         output = os.popen(cmd).readlines()
         for op in output:
