@@ -13,6 +13,7 @@ if len(sys.argv) != 2:
     print("Enter in the format: python3 parse_shards.py mod#")
     exit()
 
+site_to_ipsets = dict()
 for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
     try:
         csvfile = filename
@@ -136,6 +137,9 @@ for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
                     except KeyError:
                         cdn = "CDN Missing"
                     site = domain_to_site[domain]
+                    for s in site:
+                        for ip in ips:
+                            site_to_ipsets.setdefault(s, set()).add(ip)
                     url = domain_to_url[domain]
                     resources = domain_to_resources[domain]
                     line = str(site) + "," + str(url) + "," + str(domain) + "," + str(ips) + "," + str(cdn) + "," + str(resources) + "\n"
@@ -193,3 +197,16 @@ for filename in glob.glob('./shards/out_' + sys.argv[1] +'*'):
     except:
         print("alias not available")
         continue
+
+for key in site_to_ipsets:
+    ips = ", ".join(site_to_ipsets[key])
+    site_to_ipsets[key] = ips
+
+with open("site_ips_"+sys.argv[1]+".json", "w+") as f:
+    try:
+        json.dump(site_to_ipsets, f)
+    except Exception as e:
+        print("Exception: ", e)
+        exc_type, _, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno, "\n\n")
+    
