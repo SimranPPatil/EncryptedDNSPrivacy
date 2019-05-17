@@ -3,7 +3,7 @@ import glob, sys, re, json
 #{set of sites}, {set of url}, domain, {set of ips}, {set of cdns}, {set of resources}
 sites_to_ipsets = dict()
 ipsets_to_sites = dict()
-for filename in glob.glob("../output/data_out_*"):
+for filename in glob.glob("../output/data_out_*_2019_05_16.txt"):
     with open(filename) as f:
         print(filename)
         for line in f:
