@@ -109,27 +109,26 @@ def generate_data(table_num):
     potential = 0
 
     print("WRITING FINAL OUTPUT\n")
-    with open("../output/unique_"+str(table_num)+"_"+today+".txt", "w") as f:
+    with open("../output/all_"+str(table_num)+"_"+today+".txt", "w") as f:
         for ip in ip_to_sites:
-            if len(ip_to_sites[ip]) == 1:
-                # here the ip is unique
-                domains = ip_to_domains[ip]
-                for domain in domains:
-                    count_unique += 1
+            # here the ip is unique
+            domains = ip_to_domains[ip]
+            for domain in domains:
+                count_unique += 1
+                try:
+                    cdn = domain_to_cdn[domain]
+                    with_cdn += 1
+                    line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain])+ "," + str(domain_to_cdn[domain]) + "\n"
+                    f.write(line)
+                except KeyError:
+                    potential += 1
                     try:
-                        cdn = domain_to_cdn[domain]
-                        with_cdn += 1
-                        line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain])+ "," + str(domain_to_cdn[domain]) + "\n"
+                        line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain]) + ", CDN missing \n"
                         f.write(line)
-                    except KeyError:
-                        potential += 1
-                        try:
-                            line = next(iter(ip_to_sites[ip])) + "," + domain + "," +  ip + "," + str(domain_to_resources[domain]) + ", CDN missing \n"
-                            f.write(line)
-                        except Exception as e:
-                            print("Exception: ", e)
-                            exc_type, _, exc_tb = sys.exc_info()
-                            print(exc_type, exc_tb.tb_lineno, "\n\n")
+                    except Exception as e:
+                        print("Exception: ", e)
+                        exc_type, _, exc_tb = sys.exc_info()
+                        print(exc_type, exc_tb.tb_lineno, "\n\n")
                     
     print("count_unique: ", count_unique)
     print("cdn present: ", with_cdn)
