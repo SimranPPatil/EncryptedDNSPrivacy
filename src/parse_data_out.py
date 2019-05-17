@@ -73,5 +73,5 @@ for ip in ip_to_domains:
     domains = ",".join(ip_to_domains[ip])
     ip_to_domains[ip] = domains
 
-with open("ip_to_domains.json") as f:
+with open("ip_to_domains.json", "w+") as f:
     json.dump(ip_to_domains, f)
