@@ -2,7 +2,7 @@ import sys
 # neater output data_out_*
 
 if len(sys.argv) != 2:
-    print("Enter in the format: python3 parse_shards.py filename")
+    print("Enter in the format: python3 parse*.py filename")
     exit()
 
 ipset_to_domain = dict()
@@ -26,10 +26,9 @@ with open(sys.argv[1]) as f:
 count = 0
 with open("matchingips.txt", "w+") as f:
     for ipset in ipset_to_domain:
-        if len(ipset_to_domain[ipset]) > 1:
-            line = str(ipset) + "," + str(ipset_to_domain[ipset]) + "\n"
-            f.write(line)
-            # print(ipset, ipset_to_domain[ipset], len(ipset_to_domain[ipset]))
-            count += 1
+        line = str(ipset) + "," + str(ipset_to_domain[ipset]) + "\n"
+        f.write(line)
+        # print(ipset, ipset_to_domain[ipset], len(ipset_to_domain[ipset]))
+        count += 1
 
 print("instances: ", count)

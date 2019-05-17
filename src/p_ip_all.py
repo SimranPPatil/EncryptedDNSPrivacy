@@ -1,7 +1,4 @@
 import sys
-# cat ../output/data_out_* > out4.txt   
-# run on out4.txt
-# cat ../output/mpdomainsandsites_out* > out3.txt
 
 if len(sys.argv) != 2:
     print("Enter in the format: python3 parse_shards.py filename")
@@ -33,10 +30,9 @@ with open(sys.argv[1]) as f:
 count = 0
 with open("matchingipsall.txt", "w+") as f:
     for ipset in ipset_to_domain:
-        if len(ipset_to_domain[ipset]) > 1:
-            line = str(ipset) + "," + str(ipset_to_domain[ipset]) + "\n"
-            f.write(line)
-            print(ipset, ipset_to_domain[ipset])
-            count += 1
+        line = str(ipset) + "," + str(ipset_to_domain[ipset]) + "\n"
+        f.write(line)
+        print(ipset, ipset_to_domain[ipset])
+        count += 1
 
 print("instances: ", count)
