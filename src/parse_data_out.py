@@ -5,7 +5,7 @@ sites_to_ipsets = dict()
 ipsets_to_sites = dict()
 for filename in glob.glob("../output/data_out_*"):
     print(filename)
-    if "2019_05_16" in filename:
+    if "2019-05-16" in filename:
         with open(filename) as f:
             print(filename)
             for line in f:
