@@ -3,20 +3,21 @@ import glob, sys, re, json
 #{set of sites}, {set of url}, domain, {set of ips}, {set of cdns}, {set of resources}
 sites_to_ipsets = dict()
 ipsets_to_sites = dict()
-for filename in glob.glob("../output/data_out_*_2019_05_16.txt"):
-    with open(filename) as f:
-        print(filename)
-        for line in f:
-            try:
-                sites = line.split("}")[0].split("{")[1].split(",")
-                ips = line.split("}")[2].split("{")[1].split(",")
-                for site in sites:
-                    for ip in ips:
-                        sites_to_ipsets.setdefault(site, set()).add(ip)
-            except Exception as e:
-                print("Exception: ", e, len(line.split("}")))
-                exc_type, _, exc_tb = sys.exc_info()
-                print(exc_type, exc_tb.tb_lineno, "\n\n")
+for filename in glob.glob("../output/data_out_*"):
+    if "2019_05_16" in filename:
+        with open(filename) as f:
+            print(filename)
+            for line in f:
+                try:
+                    sites = line.split("}")[0].split("{")[1].split(",")
+                    ips = line.split("}")[2].split("{")[1].split(",")
+                    for site in sites:
+                        for ip in ips:
+                            sites_to_ipsets.setdefault(site, set()).add(ip)
+                except Exception as e:
+                    print("Exception: ", e, len(line.split("}")))
+                    exc_type, _, exc_tb = sys.exc_info()
+                    print(exc_type, exc_tb.tb_lineno, "\n\n")
 
 for key in sites_to_ipsets:
     ipsets = sites_to_ipsets[key]
