@@ -17,7 +17,7 @@ with open(sys.argv[1]) as f:
             try:
                 cdnset = set()
                 sites = line.split("}")[0].split("{")[1].split(",")
-                cdns = line.split("}")[3].split("{")[1].split(",")
+                cdns = line.split("}")[-2].split("{")[1].split(",")
                 print(sites, cdns)
                 for cdn in cdns:
                     cdnset.add(cdn)
