@@ -9,8 +9,8 @@ create index if not exists sites_id on sites(id);
 
 create table if not exists bq_crawl (
 	id  INTEGER PRIMARY KEY,
-	site  TEXT UNIQUE,
-	domain  TEXT UNIQUE,
+	site  TEXT,
+	domain  TEXT,
     url TEXT,
 	scheme  TEXT,
 	begin_crawl INTEGER,

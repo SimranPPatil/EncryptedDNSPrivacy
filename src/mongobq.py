@@ -69,7 +69,7 @@ def generate_data(table_num):
                 resource = "Content-Type Absent"
             sqcur.execute("insert or ignore into sites values (?,?,?,?,?)", [load_id, site, parsed_url.netloc,
                 parsed_url.scheme, int(time.time())])
-            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?)", [load_id, site, parsed_url.netloc,url,
+            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?)", [i, site, parsed_url.netloc,url,
                 parsed_url.scheme, int(time.time()),resource])
             sites_to_resources.setdefault(site, []).append(resource)
             sites_to_url.setdefault(site,[]).append(url)
