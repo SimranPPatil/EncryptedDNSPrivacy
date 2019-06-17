@@ -30,16 +30,21 @@ def generate_data(table_num):
 
     client = bigquery.Client()
     query = (
-        "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 70 "
+        "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 10 "
     )
     query_job = client.query(
         query,
         location="US",
     )
-    sites_to_resources = {}
-    sites_to_url = {}
-    sites_to_id = {}
-    i = 0
+    
+    i = 0 # get last index from the db
+    try:
+        for row in sqcur.execute("select id from bq_crawl order by id desc limit 1"):
+            i = row[0] + 1
+    except:
+        i = 0
+    
+    print("starting job with i as ", i)
     for obj in query_job:
         try:
             load_id = obj["id"]
@@ -56,28 +61,42 @@ def generate_data(table_num):
             for chunk in r.iter_content(1024):
                 body.append(chunk)
                 if time.time() > (start + TO):
-                    print("body: ", len(body), "\n")
                     flag = True
                     break
             if flag:
                 continue
             if (len(parsed_url.netloc)) == 0:
                 continue
+
+            load_scheme = parsed_url.scheme
+            load_port = None
+            if load_scheme == "http":
+                load_port = 80
+            elif load_scheme == "https":
+                load_port = 443
+
+            load_domain = None
+            if load_scheme.startswith("http"):
+                # ignore other schemes, particularly data
+                netloc = parsed_url.netloc
+                try:
+                    load_domain, load_port = netloc.split(':')
+                    load_port = int(load_port)
+                except:
+                    load_domain = netloc
             try:
                 resource = r.headers['Content-Type'].split('/')[0]
             except:
                 resource = "Content-Type Absent"
-            sqcur.execute("insert or ignore into sites values (?,?,?,?,?)", [load_id, site, parsed_url.netloc,
-                parsed_url.scheme, int(time.time())])
-            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?)", [i, site, parsed_url.netloc,url,
-                parsed_url.scheme, int(time.time()),resource])
-            sites_to_resources.setdefault(site, []).append(resource)
-            sites_to_url.setdefault(site,[]).append(url)
-            sites_to_id[site] = load_id
-
+            
+            sqcur.execute("insert or ignore into sites values (?,?,?,?,?)", [load_id, site, load_domain,
+                load_scheme, int(time.time())])
+            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?,?)", [i, site, load_domain,url,
+                load_scheme, load_port, int(time.time()),resource])
+        
             i += 1
             if i % DB_BATCH == 0:
-                print('metadata progress: %d ' % i)
+                print('progress: %d ' % i)
                 sqdb.commit()
         except Exception as e:
             print("Exception: ", e)
@@ -85,63 +104,8 @@ def generate_data(table_num):
             print(exc_type, exc_tb.tb_lineno, "\n\n")
     sqdb.commit()
 
-    print('Finished reading metadata file, begin queries for resource data')
-
-    total_sites = len(sites_to_resources)
-    i = 0
-    print("Checking sites that have been done")
-    sqcur.execute("select distinct(scan_id) from crawl_data")
-    for row in sqcur:
-        try:
-            sites_to_resources.pop(row[0])
-        except Exception as e:
-            print("Exception: ", e)
-            exc_type, _, exc_tb = sys.exc_info()
-            print(exc_type, exc_tb.tb_lineno, "\n\n")
-
-    to_process = len(sites_to_resources)
-    print(f"{to_process}/{total_sites} sites to do")
-
-    for site in sites_to_resources:
-        try:
-            urls = sites_to_url[site]
-            for url in urls:
-                load_id = sites_to_id[site]
-                parsed_url = urlparse(url)
-                resource = sites_to_resources[site]
-
-                load_scheme = parsed_url.scheme
-                load_port = None
-                if load_scheme == "http":
-                    load_port = 80
-                elif load_scheme == "https":
-                    load_port = 443
-
-                load_domain = None
-                if load_scheme.startswith("http"):
-                    # ignore other schemes, particularly data
-                    netloc = parsed_url.netloc
-                    try:
-                        load_domain, load_port = netloc.split(':')
-                        load_port = int(load_port)
-                    except:
-                        load_domain = netloc
-                res = ",".join(resource)
-                sqcur.execute("insert into crawl_data values (?,?,?,?,?,?,?)",
-                            [load_id, site, load_domain, load_scheme, load_port, url,res])
-
-                i += 1
-                if i % DB_BATCH == 0:
-                    # Track progress
-                    print('Processed  %d / %d ' % (i, to_process))
-                    sqdb.commit()
-        except Exception as e:
-            print("Exception: ", e, site)
-            exc_type, _, exc_tb = sys.exc_info()
-            print(exc_type, exc_tb.tb_lineno, "\n\n")
-    sqdb.commit()
 def main():
-    with open("t2") as table_file:
+    with open("tables") as table_file:
         for table_num in table_file:
             print("TABLE: ", table_num.strip('\n'))
             generate_data(table_num.strip('\n'))

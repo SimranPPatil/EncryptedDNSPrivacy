@@ -13,6 +13,7 @@ create table if not exists bq_crawl (
 	domain  TEXT,
     url TEXT,
 	scheme  TEXT,
+    port INTEGER,
 	begin_crawl INTEGER,
     resource TEXT);
 
