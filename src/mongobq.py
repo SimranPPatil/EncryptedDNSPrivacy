@@ -24,14 +24,23 @@ print("Run on: ", today)
 
 # export GOOGLE_APPLICATION_CREDENTIALS="[PATH]"
 
-def generate_data(table_num):
+def get_cdn(answer, cdn_map):
+    lengths = []
+    for key in cdn_map:
+        match = SequenceMatcher(None, key[0], answer).find_longest_match(0, len(key[0]), 0, len(answer))
+        lengths.append(len(key[0][match.a: match.a + match.size]))
+    maxLen = max(lengths)
+    index = lengths.index(maxLen)
+    return cdn_map[index][1]
+
+def generate_data(table_num, cdn_map):
     sqdb = sqlite3.connect(sys.argv[1])
     sqcur = sqdb.cursor()
 
     client = bigquery.Client()
     try:
         query = (
-            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
+            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL, requests.mimeType as mimeType, requests.type as type, requests.resp_server as resp_server, requests.format as format,requests._cdn_provider as CDN FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20 "
         )
         query_job = client.query(
             query,
@@ -57,6 +66,11 @@ def generate_data(table_num):
             url = obj["requestURL"]
             parsed_url = urlparse(url)
             site = obj['siteURL']
+            resource = obj['mimeType']
+            cdn = obj['CDN']
+            req_type = obj['type']
+            req_format = obj['format']
+            resp_server = obj['resp_server']
             # unique site url or a unique page load id corresponding to a site url
             # several request urls per site url
             start = time.time()
@@ -90,15 +104,21 @@ def generate_data(table_num):
                     load_port = int(load_port)
                 except:
                     load_domain = netloc
-            try:
-                resource = r.headers['Content-Type'].split('/')[0]
-            except:
-                resource = "Content-Type Absent"
+
+            print(resource, cdn)
+            if(len(resource) == 0):
+                try:
+                    resource = r.headers['Content-Type']
+                except:
+                    resource = "Content-Type Absent"
             
+            if(len(cdn) == 0):
+                cdn = "CDN Missing"
+
             sqcur.execute("insert or ignore into sites values (?,?,?,?,?)", [load_id, site, load_domain,
                 load_scheme, int(time.time())])
-            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?,?)", [i, site, load_domain,url,
-                load_scheme, load_port, int(time.time()),resource])
+            sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?,?,?,?,?,?)", [i, site, load_domain,url,
+                load_scheme, load_port, int(time.time()),resource, cdn, req_type, req_format,resp_server])
         
             i += 1
             if i % DB_BATCH == 0:
@@ -111,10 +131,13 @@ def generate_data(table_num):
     sqdb.commit()
 
 def main():
+    cdn_map = []
+    with open('cnamechain.json') as f:
+        cdn_map = json.load(f)
     with open("tables") as table_file:
         for table_num in table_file:
             print("TABLE: ", table_num.strip('\n'))
-            generate_data(table_num.strip('\n'))
+            generate_data(table_num.strip('\n'), cdn_map)
 
 if __name__ == '__main__':
     main()

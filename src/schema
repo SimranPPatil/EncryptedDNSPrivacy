@@ -15,7 +15,11 @@ create table if not exists bq_crawl (
 	scheme  TEXT,
     port INTEGER,
 	begin_crawl INTEGER,
-    resource TEXT);
+    mimeType TEXT,
+    cdn TEXT,
+    type TEXT,
+    format TEXT,
+    resp_server TEXT);
 
 create index if not exists bq_id on bq_crawl(id);
 
