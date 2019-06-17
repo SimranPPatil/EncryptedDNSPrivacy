@@ -29,14 +29,20 @@ def generate_data(table_num):
     sqcur = sqdb.cursor()
 
     client = bigquery.Client()
-    query = (
-        "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
-    )
-    query_job = client.query(
-        query,
-        location="US",
-    )
-    
+    try:
+        query = (
+            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
+        )
+        query_job = client.query(
+            query,
+            location="US",
+        )
+    except Exception as e:
+        print("Exception: ", e)
+        exc_type, _, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno, "\n\n")
+        return
+
     i = 0 # get last index from the db
     try:
         for row in sqcur.execute("select id from bq_crawl order by id desc limit 1"):
