@@ -30,7 +30,7 @@ def generate_data(table_num):
 
     client = bigquery.Client()
     query = (
-        "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 10 "
+        "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
     )
     query_job = client.query(
         query,
