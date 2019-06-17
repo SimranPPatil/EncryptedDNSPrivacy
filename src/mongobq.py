@@ -40,7 +40,7 @@ def generate_data(table_num, cdn_map):
     client = bigquery.Client()
     try:
         query = (
-            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL, requests.mimeType as mimeType, requests.type as type, requests.resp_server as resp_server, requests.format as format,requests._cdn_provider as CDN FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20 "
+            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL, requests.mimeType as mimeType, requests.type as type, requests.resp_server as resp_server, requests.format as format,requests._cdn_provider as CDN FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
         )
         query_job = client.query(
             query,
