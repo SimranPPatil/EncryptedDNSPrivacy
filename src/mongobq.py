@@ -40,7 +40,7 @@ def generate_data(table_num, cdn_map):
     client = bigquery.Client()
     try:
         query = (
-            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL, requests.mimeType as mimeType, requests.type as type, requests.resp_server as resp_server, requests.format as format,requests._cdn_provider as CDN FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 20000 "
+            "SELECT pages.pageid as id, pages.url as siteURL, requests.url as requestURL, requests.mimeType as mimeType, requests.type as type, requests.resp_server as resp_server, requests.format as format,requests._cdn_provider as CDN FROM httparchive.summary_pages." + table_num + " pages INNER JOIN httparchive.summary_requests." + table_num + " requests ON pages.pageid = requests.pageid LIMIT 50 "
         )
         query_job = client.query(
             query,
@@ -58,7 +58,7 @@ def generate_data(table_num, cdn_map):
             i = row[0] + 1
     except:
         i = 0
-    
+
     print("starting job with i as ", i)
     for obj in query_job:
         try:
@@ -111,7 +111,7 @@ def generate_data(table_num, cdn_map):
                     resource = r.headers['Content-Type']
                 except:
                     resource = "Content-Type Absent"
-            
+
             if(len(cdn) == 0):
                 cdn = "CDN Missing"
 
@@ -119,7 +119,7 @@ def generate_data(table_num, cdn_map):
                 load_scheme, int(time.time())])
             sqcur.execute("insert or ignore into bq_crawl values (?,?,?,?,?,?,?,?,?,?,?,?)", [i, site, load_domain,url,
                 load_scheme, load_port, int(time.time()),resource, cdn, req_type, req_format,resp_server])
-        
+
             i += 1
             if i % DB_BATCH == 0:
                 print('progress: %d ' % i)

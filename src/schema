@@ -65,3 +65,10 @@ create table if not exists cnames (
   cname TEXT);
 
 create index if not exists cnames_domain on cnames(domain);
+
+create table if not exists cnames_cdn (
+  domain TEXT,
+  cname TEXT,
+  cdn TEXT);
+
+create index if not exists cnames_cdn_domain on cnames_cdn(domain);
