@@ -67,7 +67,7 @@ def generate_data(table_num):
                 line = domain.strip("\n") + "\n"
                 domainlist.write(line)
             domain_to_site.setdefault(domain, set()).add(site)            
-            resource = r.headers['Content-Type']
+            resource = r.headers['Content-Type'].split('/')[0]
             print(domain, resource)
             domain_to_resources.setdefault(domain, set()).add(resource)
         except Exception as e:

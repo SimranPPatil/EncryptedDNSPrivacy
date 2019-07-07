@@ -95,6 +95,7 @@ async def batch_reader(db, file):
                     changed = True
             if changed:
                 counter += 1
+                print(counter)
                 if counter % BATCH_SIZE == 0:
                     print("commit...")
                     await db.commit()

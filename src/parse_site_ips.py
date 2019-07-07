@@ -2,6 +2,7 @@ import json, glob
 ips_to_sites = dict()
 
 for filename in glob.glob("./site_ips_*.json"):
+    print(filename)
     with open(filename) as f:
         data = json.load(f)
         for key in data:

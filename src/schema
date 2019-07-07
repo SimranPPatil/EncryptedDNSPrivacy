@@ -11,15 +11,15 @@ create table if not exists bq_crawl (
 	id  INTEGER PRIMARY KEY,
 	site  TEXT,
 	domain  TEXT,
-    url TEXT,
+	url TEXT,
 	scheme  TEXT,
-    port INTEGER,
+	port INTEGER,
 	begin_crawl INTEGER,
-    mimeType TEXT,
-    cdn TEXT,
-    type TEXT,
-    format TEXT,
-    resp_server TEXT);
+	mimeType TEXT,
+	cdn TEXT,
+	type TEXT,
+	format TEXT,
+	resp_server TEXT);
 
 create index if not exists bq_id on bq_crawl(id);
 
