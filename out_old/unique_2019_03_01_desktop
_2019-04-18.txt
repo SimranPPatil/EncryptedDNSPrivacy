@@ -1,4 +1,0 @@
-http://flowerhappiness.kr/,flowerhappiness.kr,119.205.197.87,{'image/png', 'image/gif', 'image/jpeg', 'text/html'}, CDN missing 
-http://flowerhappiness.kr/,ssl.http.or.kr,114.108.136.228,{'image/gif'}, CDN missing 
-http://flowerhappiness.kr/,cnf.http.or.kr,114.108.136.233,{'text/html'}, CDN missing 
-http://flowerhappiness.kr/,fonts.gstatic.com,172.217.8.195,{'font/woff2'},{'Google'}
