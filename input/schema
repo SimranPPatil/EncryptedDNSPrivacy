@@ -7,22 +7,6 @@ create table if not exists sites (
 
 create index if not exists sites_id on sites(id);
 
-create table if not exists bq_crawl (
-	id  INTEGER PRIMARY KEY,
-	site  TEXT,
-	domain  TEXT,
-	url TEXT,
-	scheme  TEXT,
-	port INTEGER,
-	begin_crawl INTEGER,
-	mimeType TEXT,
-	cdn TEXT,
-	type TEXT,
-	format TEXT,
-	resp_server TEXT);
-
-create index if not exists bq_id on bq_crawl(id);
-
 create table if not exists crawl_data (
 	load_id INTEGER PRIMARY KEY,
 	scan_id INTEGER,
@@ -30,7 +14,8 @@ create table if not exists crawl_data (
 	scheme STRING,
 	port INTEGER,
 	load_url STRING,
-	load_type STRING);
+	load_type STRING,
+	UNIQUE(load_id, scan_id));
 
 create index if not exists crawl_id on crawl_data(load_id);
 create index if not exists crawl_scan on crawl_data(scan_id);
@@ -66,9 +51,25 @@ create table if not exists cnames (
 
 create index if not exists cnames_domain on cnames(domain);
 
-create table if not exists cnames_cdn (
-  domain TEXT,
-  cname TEXT,
+create table if not exists rdns (
+    ip INTEGER,
+    domain TEXT,
+    UNIQUE(ip,domain)
+);
+
+create index if not exists rdns_ip on rdns(ip);
+
+create table if not exists ip_cdn (
+  ip INTEGER,
   cdn TEXT);
 
-create index if not exists cnames_cdn_domain on cnames_cdn(domain);
+create index if not exists ip_cdn_ip on ip_cdn(ip);
+
+create table if not exists load_cdn (
+	load_id INTEGER PRIMARY KEY,
+	scan_id INTEGER,
+	load_url STRING,
+	cdn STRING,
+	UNIQUE(load_id, scan_id));
+
+create index if not exists load_cdn_id on load_cdn(load_id);
