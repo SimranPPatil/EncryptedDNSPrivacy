@@ -1,0 +1,9 @@
+create table if not exists site_domain2ip (
+    site_domain TEXT,
+    site_ip TEXT
+);
+
+create table if not exists load_domain2ip (
+    load_domain TEXT,
+    load_ip TEXT
+);
