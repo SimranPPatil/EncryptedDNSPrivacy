@@ -1,0 +1,210 @@
+import os
+import sqlite3
+import sys
+import json
+import asyncio
+from asyncio.subprocess import PIPE
+import aiosqlite
+import aiofiles
+from os.path import expanduser
+from google.cloud import storage
+from google.cloud import bigquery
+
+ZDNS = expanduser("~/go/bin/zdns")
+BATCH_SIZE = 100
+SEEN_QUERY = "SELECT DISTINCT(domain) from domain2ip"
+TYPE = "domain"
+INSERT = "insert or ignore into domain2ip values (?,?)"
+
+async def batch_writer(db, file_in, filename):
+    async with aiofiles.open(filename, "r") as json_file:
+        seen = set()
+        threshold = 1
+        print("Checking already looked up domains")
+        async with db.execute(SEEN_QUERY) as cursor:
+            async for row in cursor:
+                print("row is: ", row, row[0])
+                seen.add(row[0])
+        print(f"{len(seen)} domains already done, starting query")
+        done_cnt = len(seen)
+        async for entry in json_file:
+            entry = json.loads(entry)
+            try:
+                domain = entry[TYPE]
+            except:
+                domain = None
+            print(TYPE, domain)
+
+            if domain not in seen:
+                file_in.write(f"{domain}\n".encode())
+                await file_in.drain()
+                seen.add(domain)
+                new_cnt = len(seen) - done_cnt
+                if new_cnt > threshold:
+                    print(f"SQL: {new_cnt}, {domain}")
+                    threshold *= 1.25
+        print(f"Sent {new_cnt} items")
+    file_in.write_eof()
+    await file_in.drain()
+
+async def batch_reader(db, file):
+    counter = 0
+    while True:
+        line = await file.readline()
+        if not line:
+            break
+
+        data = json.loads(line)
+        domain = data['name']
+        
+        if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
+            for a in data['data']['answers']:
+                print(domain, a)
+                try:
+                    await db.execute(INSERT, (domain, a['answer'].strip('.')))
+                except:
+                    print("skipped: ", data)
+                counter += 1
+                if counter % BATCH_SIZE == 0:
+                    print("commit...")
+                    await db.commit()
+                    print(f"committed {counter}")
+    await db.commit()
+    print(f"committed {counter}, done")
+
+async def process(filename):
+    async with aiosqlite.connect(sys.argv[1]) as db:
+        print("Connected")
+        proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
+                                                    stdout=PIPE, stdin=PIPE, limit=2**20)
+        await asyncio.gather(
+            batch_writer(db, proc.stdin, filename),
+            batch_reader(db, proc.stdout))
+
+def update_big_table(dataset_id, run_date, source_uri):
+    client = bigquery.Client()
+
+    # Configure the external data source
+    dataset_ref = client.dataset(dataset_id)
+    table_id = 'domain2ip_' + run_date
+    schema = [
+        bigquery.SchemaField('domain', 'STRING'),
+        bigquery.SchemaField('ip', 'STRING')
+    ]
+    table = bigquery.Table(dataset_ref.table(table_id), schema=schema)
+    external_config = bigquery.ExternalConfig('json')
+    external_config.source_uris = [
+        source_uri,
+    ]
+    table.external_data_configuration = external_config
+
+    # Create a permanent table linked to the GCS file
+    # creates new domain2ip table from json file
+    table = client.create_table(table)  # API request
+
+    sql = ' UPDATE `{}.{}` AS final_table \
+            SET final_table.site_ip = \
+            CASE WHEN final_table.site_domain = gcs_table.domain THEN gcs_table.ip \
+            ELSE NULL \
+            END , \
+            final_table.load_ip = \
+            CASE WHEN final_table.load_domain = gcs_table.domain THEN gcs_table.ip \
+            ELSE NULL \
+            END \
+            FROM `{}.{}` AS gcs_table \
+            where 1=1 '.format(dataset_id, final_table, dataset_id, gcs_table)
+
+    query_job = client.query(sql)  # API request
+
+def get_domain_list_and_export(project, dataset_id, final_table, table_id, bucket_name):
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    # job_config.use_legacy_sql = True
+    table_ref = client.dataset(dataset_id).table(table_id)
+    job_config.destination = table_ref
+    job_config.allow_large_results = True
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
+
+    query_str = ' select distinct(site_domain) as domain \
+            from `{}.{}` union distinct \
+            select distinct(load_domain) as domain \
+            from `{}.{}`'.format(dataset_id, final_table, dataset_id, final_table)
+    
+    query = (
+        query_str
+    )
+    
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+
+    query_job.result()
+    print('Query results loaded to table {}'.format(table_ref.path))
+
+    destination_uri = "gs://{}/{}".format(bucket_name, "domain_list-*.json")
+    dataset_ref = client.dataset(dataset_id, project=project)
+    table_ref = dataset_ref.table(table_id)
+    job_config = bigquery.ExtractJobConfig()
+    job_config.destination_format = 'NEWLINE_DELIMITED_JSON'
+
+    extract_job = client.extract_table(
+        table_ref,
+        destination_uri,
+        location="US",
+        job_config = job_config
+    )  
+    extract_job.result()  # Waits for job to complete.
+
+    print(
+        "Exported {}:{}.{} to {}".format(project, dataset_id, table_id, destination_uri)
+    )
+
+    return destination_uri
+
+def download_blobs(bucket_name, url_format):
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blobs = storage_client.list_blobs(bucket_name)
+    valid_uri = []
+    for blob in blobs:
+        if url_format in blob.name:
+            valid_uri.append(blob.name)
+            blob.download_to_filename(blob.name)
+    return valid_uri
+
+def dbTojson(table_name):
+    conn = sqlite3.connect(sys.argv[1])
+    cur = conn.cursor()
+    query = 'SELECT * from ' + table_name
+    result = cur.execute(query)
+
+    ld = [dict(zip([key[0] for key in cur.description], row)) for row in result]
+    with open(table_name+'.json', 'w+') as outfile:
+        for l in ld:
+            json.dump(l, outfile)
+            outfile.write("\n")
+
+if __name__ == "__main__":
+
+    if len(sys.argv) < 3:
+        print("Enter Database to be populated, gcs_json_table_name")
+        exit()
+
+    project = "ipprivacy"
+    dataset_id = "subsetting"
+    source_uri = "gs://domains_2019_07_01/domain2ip.json"
+    final_table = "sample_1000_summary_request_domain"
+    table_id = "domain_list_curr"
+    bucket_name = 'domains_2019_07_01'
+    url_format = 'domain_list-'
+
+    destination_uri = get_domain_list_and_export(project, dataset_id, final_table, table_id, bucket_name)
+    valid_uri = download_blobs(bucket_name, url_format)
+    
+    for uri in valid_uri:
+        print("uri: ", uri)
+        asyncio.run(process(uri))
+    
+    dbTojson(sys.argv[2])

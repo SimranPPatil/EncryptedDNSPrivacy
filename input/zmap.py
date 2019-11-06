@@ -21,10 +21,14 @@ if sys.argv[3] == "site":
     SEEN_QUERY = SEEN_SITE
     TYPE = 'site_domain'
     INSERT = "insert or ignore into site_domain2ip values (?,?)"
-else:
+elif sys.argv[3] == "load":
     SEEN_QUERY = SEEN_LOAD
     TYPE = 'load_domain'
     INSERT = "insert or ignore into load_domain2ip values (?,?)"
+else:
+    SEEN_QUERY = "SELECT DISTINCT(domain) from domain2ip"
+    TYPE = "domain"
+    INSERT = "insert or ignore into domain2ip values (?,?)"
 
 FILENAME = sys.argv[2]
 
