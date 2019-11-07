@@ -81,40 +81,57 @@ async def process(filename):
             batch_writer(db, proc.stdin, filename),
             batch_reader(db, proc.stdout))
 
-def update_big_table(dataset_id, run_date, source_uri):
+def load_table_from_gcs(dataset_id, uri, table_id):
     client = bigquery.Client()
-
-    # Configure the external data source
     dataset_ref = client.dataset(dataset_id)
-    table_id = 'domain2ip_' + run_date
-    schema = [
-        bigquery.SchemaField('domain', 'STRING'),
-        bigquery.SchemaField('ip', 'STRING')
+    job_config = bigquery.LoadJobConfig()
+    job_config.schema = [
+        bigquery.SchemaField("domain", "STRING"),
+        bigquery.SchemaField("ip", "STRING"),
     ]
-    table = bigquery.Table(dataset_ref.table(table_id), schema=schema)
-    external_config = bigquery.ExternalConfig('json')
-    external_config.source_uris = [
-        source_uri,
-    ]
-    table.external_data_configuration = external_config
+    job_config.source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+    job_config.write_disposition = 'WRITE_TRUNCATE'
+    load_job = client.load_table_from_uri(
+        uri,
+        dataset_ref.table(table_id),
+        location="US",  # Location must match that of the destination dataset.
+        job_config=job_config,
+    )  # API request
+    print("Starting job {}".format(load_job.job_id))
 
-    # Create a permanent table linked to the GCS file
-    # creates new domain2ip table from json file
-    table = client.create_table(table)  # API request
+    load_job.result()  # Waits for table load to complete.
+    print("Job finished.")
 
-    sql = ' UPDATE `{}.{}` AS final_table \
-            SET final_table.site_ip = \
-            CASE WHEN final_table.site_domain = gcs_table.domain THEN gcs_table.ip \
-            ELSE NULL \
-            END , \
-            final_table.load_ip = \
-            CASE WHEN final_table.load_domain = gcs_table.domain THEN gcs_table.ip \
-            ELSE NULL \
-            END \
-            FROM `{}.{}` AS gcs_table \
-            where 1=1 '.format(dataset_id, final_table, dataset_id, gcs_table)
+    destination_table = client.get_table(dataset_ref.table(table_id))
+    print("Loaded {} rows.".format(destination_table.num_rows))
 
-    query_job = client.query(sql)  # API request
+def update_big_table(dataset_id, final_table, table_from_gcs):
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    
+    sql = ' UPDATE `{}.{}` A \
+    SET A.site_ip = IFNULL( \
+    (SELECT B.ip FROM `{}.{}` B \
+    WHERE A.site_domain = B.domain \
+    ), \
+    A.site_ip \
+    ), \
+    A.load_ip = IFNULL( \
+    (SELECT B.ip FROM `{}.{}` B \
+    WHERE A.load_domain = B.domain \
+    ), \
+    A.load_ip \
+    ) \
+    where TRUE '.format(dataset_id,final_table,
+                        dataset_id,table_from_gcs,
+                        dataset_id,table_from_gcs)
+
+    query_job = client.query(
+        sql,
+        job_config = job_config
+    ) 
+
+    print("Starting job {}".format(query_job.job_id))
 
 def get_domain_list_and_export(project, dataset_id, final_table, table_id, bucket_name):
     client = bigquery.Client()
@@ -179,12 +196,51 @@ def dbTojson(table_name):
     cur = conn.cursor()
     query = 'SELECT * from ' + table_name
     result = cur.execute(query)
-
+    file_generated = table_name+'.json'
     ld = [dict(zip([key[0] for key in cur.description], row)) for row in result]
-    with open(table_name+'.json', 'w+') as outfile:
+    with open(file_generated, 'w+') as outfile:
         for l in ld:
             json.dump(l, outfile)
             outfile.write("\n")
+    
+    return file_generated
+
+def upload_json_to_gcs(bucket_name, source_file_name, destination_blob_name):
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    blob.upload_from_filename(source_file_name)
+
+    print('File {} uploaded to {}.'.format(
+        source_file_name,
+        destination_blob_name))
+
+def run_aggregation_query(table_name, dataset_id, table_id):
+    # aggregate ips corresponding to a domain 
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    table_ref = client.dataset(dataset_id).table(table_id)
+    job_config.destination = table_ref
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
+
+    query_str = "   SELECT domain, \
+                STRING_AGG(ip ORDER BY ip) AS ip \
+                FROM ipprivacy.subsetting.`{}` \
+                GROUP BY domain ".format(table_name)
+    
+    query = (
+        query_str
+    )
+    
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+
+    query_job.result()
+    print('Query results loaded to table {}'.format(table_ref.path))
 
 if __name__ == "__main__":
 
@@ -194,12 +250,12 @@ if __name__ == "__main__":
 
     project = "ipprivacy"
     dataset_id = "subsetting"
-    source_uri = "gs://domains_2019_07_01/domain2ip.json"
     final_table = "sample_1000_summary_request_domain"
     table_id = "domain_list_curr"
     bucket_name = 'domains_2019_07_01'
     url_format = 'domain_list-'
 
+    '''
     destination_uri = get_domain_list_and_export(project, dataset_id, final_table, table_id, bucket_name)
     valid_uri = download_blobs(bucket_name, url_format)
     
@@ -207,4 +263,11 @@ if __name__ == "__main__":
         print("uri: ", uri)
         asyncio.run(process(uri))
     
-    dbTojson(sys.argv[2])
+    file_generated = dbTojson(sys.argv[2])
+    upload_json_to_gcs(bucket_name,file_generated,file_generated)
+
+    source_uri = "gs://"+bucket_name+"/"+file_generated
+    load_table_from_gcs(dataset_id, source_uri, table_id+"from_gcs")
+    '''
+    #run_aggregation_query(table_id+"from_gcs", dataset_id, "agg_"+table_id+"from_gcs")
+    update_big_table(dataset_id, final_table, "agg_"+table_id+"from_gcs")
