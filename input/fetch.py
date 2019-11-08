@@ -273,7 +273,7 @@ if __name__ == "__main__":
 
     project = "ipprivacy"
     dataset_id = "subsetting"
-    final_table = "sample_1000_summary_request_domain"
+    final_table = "summary_requests_domain"
     table_id = "domain_list_curr"
     bucket_name = 'domains_2019_07_01'
     url_format = 'domain_list-'
