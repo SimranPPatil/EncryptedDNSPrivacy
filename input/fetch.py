@@ -63,12 +63,14 @@ async def batch_reader(db, file):
                 try:
                     await db.execute(INSERT, (domain, a['answer'].strip('.')))
                 except:
-                    print("skipped: ", data)
-                counter += 1
-                if counter % BATCH_SIZE == 0:
-                    print("commit...")
-                    await db.commit()
-                    print(f"committed {counter}")
+                    await db.execute(INSERT, (domain, "NONE"))
+        else:
+            await db.execute(INSERT, (domain, "NONE"))
+        counter += 1
+        if counter % BATCH_SIZE == 0:
+            print("commit...")
+            await db.commit()
+            print(f"committed {counter}")
     await db.commit()
     print(f"committed {counter}, done")
 
@@ -80,6 +82,27 @@ async def process(filename):
         await asyncio.gather(
             batch_writer(db, proc.stdin, filename),
             batch_reader(db, proc.stdout))
+
+def execute_query(dataset_id, table_id, query_str):
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    table_ref = client.dataset(dataset_id).table(table_id)
+    job_config.destination = table_ref
+    job_config.allow_large_results = True
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
+ 
+    query = (
+        query_str
+    )
+    
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+
+    query_job.result()
+    print('Query results loaded to table {}'.format(table_ref.path))
 
 def load_table_from_gcs(dataset_id, uri, table_id):
     client = bigquery.Client()
@@ -255,19 +278,17 @@ if __name__ == "__main__":
     bucket_name = 'domains_2019_07_01'
     url_format = 'domain_list-'
 
-    '''
     destination_uri = get_domain_list_and_export(project, dataset_id, final_table, table_id, bucket_name)
     valid_uri = download_blobs(bucket_name, url_format)
     
     for uri in valid_uri:
         print("uri: ", uri)
         asyncio.run(process(uri))
-    
+
     file_generated = dbTojson(sys.argv[2])
     upload_json_to_gcs(bucket_name,file_generated,file_generated)
 
     source_uri = "gs://"+bucket_name+"/"+file_generated
-    load_table_from_gcs(dataset_id, source_uri, table_id+"from_gcs")
-    '''
-    #run_aggregation_query(table_id+"from_gcs", dataset_id, "agg_"+table_id+"from_gcs")
-    update_big_table(dataset_id, final_table, "agg_"+table_id+"from_gcs")
+    load_table_from_gcs(dataset_id, source_uri, table_id+"_from_gcs")
+    run_aggregation_query(table_id+"_from_gcs", dataset_id, "agg_"+table_id+"_from_gcs")
+    update_big_table(dataset_id, final_table, "agg_"+table_id+"_from_gcs")
