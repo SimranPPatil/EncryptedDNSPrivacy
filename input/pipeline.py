@@ -228,7 +228,7 @@ if __name__ == "__main__":
     bq_domain2ip_table = "domain2ip"
     bq_domain_list = "domain_list"
 
-    #create_bq_table(dataset_id, bq_table_to_be_updated)
+    create_bq_table(dataset_id, bq_table_to_be_updated)
     get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
     flag = True
     rows_to_insert = []
