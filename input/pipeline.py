@@ -31,8 +31,7 @@ async def batch_writer(file_in):
     file_in.write_eof()
     await file_in.drain()
 
-async def batch_reader(file, client, table):
-    rows_to_insert = []
+async def batch_reader(file, rows_to_insert):
     counter = 0
     while True:
         line = await file.readline()
@@ -52,27 +51,35 @@ async def batch_reader(file, client, table):
         else:
             rows_to_insert.append((domain, "NONE"))
         counter += 1
-        if counter % BATCH_SIZE == 0:
-            if len(rows_to_insert):
-                errors = client.insert_rows(table, rows_to_insert)
-                print(f"inserted {counter}, errors: ", len(errors))
-                rows_to_insert = []
+
     if len(rows_to_insert):
-        errors = client.insert_rows(table, rows_to_insert)
-        print(f"inserted {counter}, done, errors: ", len(errors))
+        print(f"inserted {len(rows_to_insert)}, done")
     else:
         print("no rows to insert")
 
-async def process(dataset_id, table_id):
+async def process(dataset_id, table_id, flag):
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table(table_id)
     table = client.get_table(table_ref) 
+    rows_to_insert = []
 
     proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
+                    
     await asyncio.gather(
         batch_writer(proc.stdin),
-        batch_reader(proc.stdout, client, table))
+        batch_reader(proc.stdout, rows_to_insert))
+    
+    print(len(rows_to_insert), rows_to_insert)
+    
+    try:
+        errors = client.insert_rows(table, rows_to_insert)
+        print("errors: ", errors)
+        flag.append(True)
+    except Exception as e:
+        print("Insert row exception: ", e)
+        flag.append(False)
+    
 
 def update_big_table(dataset_id, table_id, bq_domain2ip_table):
     client = bigquery.Client()
@@ -101,10 +108,10 @@ def update_big_table(dataset_id, table_id, bq_domain2ip_table):
     ) 
 
     print("Starting job {}".format(query_job.job_id))
+    query_job.result()
 
 def google_bigquery_storage_api(project_id, dataset_id, table_id):
     client = bigquery_storage_v1beta1.BigQueryStorageClient()
-    # This example reads baby name data from the public datasets.
     table_ref = bigquery_storage_v1beta1.types.TableReference()
     table_ref.project_id = project_id
     table_ref.dataset_id = dataset_id
@@ -116,7 +123,7 @@ def google_bigquery_storage_api(project_id, dataset_id, table_id):
         parent,
         format_=bigquery_storage_v1beta1.enums.DataFormat.AVRO,
         sharding_strategy=(bigquery_storage_v1beta1.enums.ShardingStrategy.LIQUID),
-    )  # API request.
+    )  
 
     domain = set()
     try:
@@ -141,13 +148,15 @@ def get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip
     job_config.allow_large_results = True
     job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
 
-    query_str = "   select domain from (select distinct(site_domain) as domain \
+    query_str = "select domain from (select distinct(site_domain) as domain \
                 from `{}.{}` union distinct select distinct(load_domain) as domain \
                 from `{}.{}`)sub where domain not in \
-                (select domain from `{}.{}`) ".format(dataset_id, bq_table_to_be_updated,
+                (select domain from `{}.{}`)".format(
+                dataset_id, bq_table_to_be_updated,
                 dataset_id, bq_table_to_be_updated, 
                 dataset_id, bq_domain2ip_table)
     
+    print("executing: ", query_str)
     query = (
         query_str
     )
@@ -187,21 +196,53 @@ def run_aggregation_query(dataset_id, bq_domain2ip_table):
     )
 
     query_job.result()
+    print('Run_agg: Query results loaded to table {}'.format(table_ref.path))
+
+def create_bq_table(dataset_id, table_id):
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    table_ref = client.dataset(dataset_id).table(table_id)
+    job_config.destination = table_ref
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
+
+    query_str = ' SELECT P.pageid as pageid, R.requestid as requestid, \
+                P.url as site_url, R.url as load_url, NET.REG_DOMAIN(P.url) as site_domain, \
+                NET.REG_DOMAIN(R.url) as load_domain, P.cdn as site_cdn, \
+                R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType, "" as site_ip , "" as load_ip \
+                FROM httparchive.summary_pages.`{}` as P \
+                INNER JOIN httparchive.summary_requests.`{}` R ON P.pageid = R.pageid'.format(table_id, table_id)
+    query = (
+        query_str
+    )
+    
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+
+    query_job.result()
     print('Query results loaded to table {}'.format(table_ref.path))
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 6:
-        print("Enter project_id dataset_id bq_table_to_be_updated bq_domain2ip_table bq_domain_list")
+    if len(sys.argv) < 2:
+        print("Enter bq_table_to_be_updated (example: 2019_10_01_desktop) ")
         exit()
 
-    project_id = sys.argv[1] #"ipprivacy"
-    dataset_id = sys.argv[2] #"subsetting"
-    bq_table_to_be_updated = sys.argv[3] #"summary_requests_domain"
-    bq_domain2ip_table = sys.argv[4] #domain_list_curr_from_gcs
-    bq_domain_list = sys.argv[5] #domain2ip.db
+    project_id = "ipprivacy"
+    dataset_id = "subsetting"
+    bq_table_to_be_updated = sys.argv[1] 
+    bq_domain2ip_table = "domain2ip"
+    bq_domain_list = "domain_list"
 
+    create_bq_table(dataset_id, bq_table_to_be_updated)
     get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
-    asyncio.run(process(dataset_id, bq_domain2ip_table))
-    run_aggregation_query(dataset_id, bq_domain2ip_table)
+    flag = []
+    asyncio.run(process(dataset_id, bq_domain2ip_table, flag))
+    print(flag)
+    if flag[-1]:
+        run_aggregation_query(dataset_id, bq_domain2ip_table)
+    else:
+        print(f"flag: {flag[-1]} --> No aggregation needed")
     update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
