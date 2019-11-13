@@ -62,11 +62,7 @@ def batch(iterable, n=1):
     for ndx in range(0, l, n):
         yield iterable[ndx:min(ndx + n, l)]
 
-async def process(dataset_id, table_id, flag, rows_to_insert):
-    client = bigquery.Client()
-    table_ref = client.dataset(dataset_id).table(table_id)
-    table = client.get_table(table_ref) 
-    
+async def process(rows_to_insert):
     proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
                     
@@ -234,9 +230,13 @@ if __name__ == "__main__":
 
     #create_bq_table(dataset_id, bq_table_to_be_updated)
     get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
-    flag = []
+    flag = True
     rows_to_insert = []
-    asyncio.run(process(dataset_id, bq_domain2ip_table, flag, rows_to_insert))
+    asyncio.run(process(rows_to_insert))
+
+    client = bigquery.Client()
+    table_ref = client.dataset(dataset_id).table(bq_domain2ip_table)
+    table = client.get_table(table_ref) 
 
     print("outside: len of rows to insert: " , len(rows_to_insert))
     for row in batch(rows_to_insert, 1000):
@@ -244,13 +244,12 @@ if __name__ == "__main__":
         try:
             errors = client.insert_rows(table, row)
             print("errors: ", errors)
-            flag.append(True)
         except Exception as e:
             print("Insert row exception: ", e)
-            flag.append(False)
+            flag = False
     print(flag)
-    if flag[-1]:
+    if flag:
         run_aggregation_query(dataset_id, bq_domain2ip_table)
     else:
-        print(f"flag: {flag[-1]} --> No aggregation needed")
+        print(f"flag: {flag} --> No aggregation needed")
     update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
