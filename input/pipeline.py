@@ -57,6 +57,11 @@ async def batch_reader(file, rows_to_insert):
     else:
         print("no rows to insert")
 
+def batch(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
+
 async def process(dataset_id, table_id, flag):
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table(table_id)
@@ -70,15 +75,17 @@ async def process(dataset_id, table_id, flag):
         batch_writer(proc.stdin),
         batch_reader(proc.stdout, rows_to_insert))
     
-    print(len(rows_to_insert), rows_to_insert)
+    print("len of rows to insert: " , len(rows_to_insert))
     
-    try:
-        errors = client.insert_rows(table, rows_to_insert)
-        print("errors: ", errors)
-        flag.append(True)
-    except Exception as e:
-        print("Insert row exception: ", e)
-        flag.append(False)
+    for row in batch(rows_to_insert, 1000):
+        print("len of x: " , len(x))
+        try:
+            errors = client.insert_rows(table, x)
+            print("errors: ", errors)
+            flag.append(True)
+        except Exception as e:
+            print("Insert row exception: ", e)
+            flag.append(False)
     
 
 def update_big_table(dataset_id, table_id, bq_domain2ip_table):
