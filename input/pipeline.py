@@ -62,12 +62,11 @@ def batch(iterable, n=1):
     for ndx in range(0, l, n):
         yield iterable[ndx:min(ndx + n, l)]
 
-async def process(dataset_id, table_id, flag):
+async def process(dataset_id, table_id, flag, rows_to_insert):
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table(table_id)
     table = client.get_table(table_ref) 
-    rows_to_insert = []
-
+    
     proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
                     
@@ -76,16 +75,6 @@ async def process(dataset_id, table_id, flag):
         batch_reader(proc.stdout, rows_to_insert))
     
     print("len of rows to insert: " , len(rows_to_insert))
-    
-    for row in batch(rows_to_insert, 1000):
-        print("len of x: " , len(x))
-        try:
-            errors = client.insert_rows(table, x)
-            print("errors: ", errors)
-            flag.append(True)
-        except Exception as e:
-            print("Insert row exception: ", e)
-            flag.append(False)
     
 
 def update_big_table(dataset_id, table_id, bq_domain2ip_table):
@@ -243,10 +232,22 @@ if __name__ == "__main__":
     bq_domain2ip_table = "domain2ip"
     bq_domain_list = "domain_list"
 
-    create_bq_table(dataset_id, bq_table_to_be_updated)
+    #create_bq_table(dataset_id, bq_table_to_be_updated)
     get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
     flag = []
-    asyncio.run(process(dataset_id, bq_domain2ip_table, flag))
+    rows_to_insert = []
+    asyncio.run(process(dataset_id, bq_domain2ip_table, flag, rows_to_insert))
+
+    print("outside: len of rows to insert: " , len(rows_to_insert))
+    for row in batch(rows_to_insert, 1000):
+        print("len of x: " , len(x))
+        try:
+            errors = client.insert_rows(table, x)
+            print("errors: ", errors)
+            flag.append(True)
+        except Exception as e:
+            print("Insert row exception: ", e)
+            flag.append(False)
     print(flag)
     if flag[-1]:
         run_aggregation_query(dataset_id, bq_domain2ip_table)
