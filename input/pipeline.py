@@ -240,9 +240,9 @@ if __name__ == "__main__":
 
     print("outside: len of rows to insert: " , len(rows_to_insert))
     for row in batch(rows_to_insert, 1000):
-        print("len of x: " , len(x))
+        print("len of row: " , len(row))
         try:
-            errors = client.insert_rows(table, x)
+            errors = client.insert_rows(table, row)
             print("errors: ", errors)
             flag.append(True)
         except Exception as e:
