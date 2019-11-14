@@ -148,7 +148,6 @@ def get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip
                 dataset_id, bq_table_to_be_updated, 
                 dataset_id, bq_domain2ip_table)
     
-    print("executing: ", query_str)
     query = (
         query_str
     )
@@ -202,7 +201,7 @@ def create_bq_table(dataset_id, table_id):
                 NET.REG_DOMAIN(R.url) as load_domain, P.cdn as site_cdn, \
                 R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType, "" as site_ip , "" as load_ip \
                 FROM httparchive.summary_pages.`{}` as P \
-                INNER JOIN httparchive.summary_requests.`{}` R ON CAST(P.pageid as INT64) = CAST(R.pageid as INT64) limit 10'.format(table_id, table_id)
+                INNER JOIN httparchive.summary_requests.`{}` R ON CAST(R.pageid as INT64) = CAST(P.pageid as INT64)'.format(table_id, table_id)
     query = (
         query_str
     )
@@ -228,7 +227,12 @@ if __name__ == "__main__":
     bq_domain2ip_table = "domain2ip"
     bq_domain_list = "domain_list"
 
-    create_bq_table(dataset_id, bq_table_to_be_updated)
+    try:
+        create_bq_table(dataset_id, bq_table_to_be_updated)
+    except Exception as e:
+        print(e)
+        exit()
+
     get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
     flag = True
     rows_to_insert = []
@@ -238,19 +242,17 @@ if __name__ == "__main__":
     table_ref = client.dataset(dataset_id).table(bq_domain2ip_table)
     table = client.get_table(table_ref) 
 
-    print("outside: len of rows to insert: " , len(rows_to_insert))
     if len(rows_to_insert) == 0:
         flag = False
     
     for row in batch(rows_to_insert, 1000):
-        print("len of row: " , len(row))
         try:
             errors = client.insert_rows(table, row)
             print("errors: ", errors)
         except Exception as e:
             print("Insert row exception: ", e)
             flag = False
-    print(flag)
+    
     if flag:
         run_aggregation_query(dataset_id, bq_domain2ip_table)
     else:
