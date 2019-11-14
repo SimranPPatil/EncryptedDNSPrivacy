@@ -202,7 +202,7 @@ def create_bq_table(dataset_id, table_id):
                 NET.REG_DOMAIN(R.url) as load_domain, P.cdn as site_cdn, \
                 R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType, "" as site_ip , "" as load_ip \
                 FROM httparchive.summary_pages.`{}` as P \
-                INNER JOIN httparchive.summary_requests.`{}` R ON P.pageid = R.pageid'.format(table_id, table_id)
+                INNER JOIN httparchive.summary_requests.`{}` R ON CAST(P.pageid as STRING) = CAST(R.pageid as STRING) limit 10'.format(table_id, table_id)
     query = (
         query_str
     )
