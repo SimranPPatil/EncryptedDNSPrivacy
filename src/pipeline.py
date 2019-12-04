@@ -163,6 +163,42 @@ def get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip
 
     google_bigquery_storage_api(project_id, dataset_id, bq_domain_list)
 
+def fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table):
+    client = bigquery.Client()
+    job_config = bigquery.QueryJobConfig()
+    job_config.allow_large_results = True
+    query_str = "select domain from (select distinct(site_domain) as domain \
+                from `{}.{}` union distinct select distinct(load_domain) as domain \
+                from `{}.{}`)sub where domain not in \
+                (select domain from `{}.{}`)".format(
+                dataset_id, bq_table_to_be_updated,
+                dataset_id, bq_table_to_be_updated, 
+                dataset_id, bq_domain2ip_table)
+    
+    query = (
+        query_str
+    )
+    
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+
+    query_job.result()
+    i = 0
+    with open("temp.csv", "w") as f:
+        for row in query_job:
+            try:
+                print(row['domain'])
+                f.write("%s\n" % row['domain'])
+                i+=1
+            except Exception as e:
+                print(e)
+                continue
+
+    print("Got {} unique domains".format(i))
+
 def run_aggregation_query(dataset_id, bq_domain2ip_table):
     # aggregate ips corresponding to a domain 
     client = bigquery.Client()
@@ -197,8 +233,8 @@ def create_bq_table(dataset_id, table_id):
     job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE #overwrites
 
     query_str = ' SELECT P.pageid as pageid, R.requestid as requestid, \
-                P.url as site_url, R.url as load_url, NET.REG_DOMAIN(P.url) as site_domain, \
-                NET.REG_DOMAIN(R.url) as load_domain, P.cdn as site_cdn, \
+                P.url as site_url, R.url as load_url, NET.HOST(P.url) as site_domain, \
+                NET.HOST(R.url) as load_domain, P.cdn as site_cdn, \
                 R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType, "" as site_ip , "" as load_ip \
                 FROM httparchive.summary_pages.`{}` as P \
                 INNER JOIN httparchive.summary_requests.`{}` R ON CAST(R.pageid as INT64) = CAST(P.pageid as INT64)'.format(table_id, table_id)
@@ -233,8 +269,9 @@ if __name__ == "__main__":
         print(e)
         exit()
 
-    get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
-    flag = True
+    # get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
+    fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
+    # flag = True
     rows_to_insert = []
     asyncio.run(process(rows_to_insert))
 
@@ -242,8 +279,8 @@ if __name__ == "__main__":
     table_ref = client.dataset(dataset_id).table(bq_domain2ip_table)
     table = client.get_table(table_ref) 
 
-    if len(rows_to_insert) == 0:
-        flag = False
+    # if len(rows_to_insert) == 0:
+    #     flag = False
     
     for row in batch(rows_to_insert, 1000):
         try:
@@ -251,10 +288,10 @@ if __name__ == "__main__":
             print("errors: ", errors)
         except Exception as e:
             print("Insert row exception: ", e)
-            flag = False
+            # flag = False
     
-    if flag:
-        run_aggregation_query(dataset_id, bq_domain2ip_table)
-    else:
-        print(f"flag: {flag} --> No aggregation needed")
+    # if flag:
+    #     run_aggregation_query(dataset_id, bq_domain2ip_table)
+    # else:
+    #     print(f"flag: {flag} --> No aggregation needed")
     update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
