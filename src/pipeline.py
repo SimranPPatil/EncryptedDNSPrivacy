@@ -10,6 +10,7 @@ from os.path import expanduser
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud import bigquery_storage_v1beta1
+from IPy import IP
 
 ZDNS = expanduser("~/go/bin/zdns")
 BATCH_SIZE = 100
@@ -32,7 +33,6 @@ async def batch_writer(file_in):
     await file_in.drain()
 
 async def batch_reader(file, rows_to_insert):
-    counter = 0
     while True:
         line = await file.readline()
         if not line:
@@ -40,17 +40,21 @@ async def batch_reader(file, rows_to_insert):
 
         data = json.loads(line)
         domain = data['name']
-        
-        if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
-            for a in data['data']['answers']:
-                print(domain, a)
-                try:
-                    rows_to_insert.append((domain, a['answer'].strip('.')))
-                except:
-                    rows_to_insert.append((domain, "NONE"))
-        else:
-            rows_to_insert.append((domain, "NONE"))
-        counter += 1
+
+        try:
+            ip_obtained = IP(domain)
+            print(domain, ip_obtained)
+            rows_to_insert.append((domain, domain))
+        except:
+            if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
+                for a in data['data']['answers']:
+                    print(domain, a)
+                    try:
+                        rows_to_insert.append((domain, a['answer'].strip('.')))
+                    except:
+                        rows_to_insert.append((domain, "NONE"))
+            else:
+                rows_to_insert.append((domain, "NONE"))
 
     if len(rows_to_insert):
         print(f"inserted {len(rows_to_insert)}, done")
@@ -166,7 +170,6 @@ def get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip
 def fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table):
     client = bigquery.Client()
     job_config = bigquery.QueryJobConfig()
-    job_config.allow_large_results = True
     query_str = "select domain from (select distinct(site_domain) as domain \
                 from `{}.{}` union distinct select distinct(load_domain) as domain \
                 from `{}.{}`)sub where domain not in \
