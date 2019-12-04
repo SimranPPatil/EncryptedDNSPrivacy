@@ -265,15 +265,16 @@ if __name__ == "__main__":
     bq_table_to_be_updated = sys.argv[1] 
     bq_domain2ip_table = "domain2ip"
     bq_domain_list = "domain_list"
-
+    '''
     try:
         create_bq_table(dataset_id, bq_table_to_be_updated)
     except Exception as e:
         print(e)
         exit()
+    '''
 
-    # get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
-    fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
+    get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
+    # fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
     # flag = True
     rows_to_insert = []
     asyncio.run(process(rows_to_insert))
