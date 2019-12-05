@@ -43,16 +43,16 @@ async def batch_reader(file, rows_to_insert):
 
         try:
             ip_obtained = IP(domain)
-            print(domain, ip_obtained)
-            rows_to_insert.append((domain, domain))
+            print("ip_ob: " , domain, ip_obtained)
+            rows_to_insert.append((domain, ip_obtained))
         except:
             if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
                 for a in data['data']['answers']:
                     print(domain, a)
                     try:
                         rows_to_insert.append((domain, a['answer'].strip('.')))
-                    except:
-                        rows_to_insert.append((domain, "NONE"))
+                    except Exception as e:
+                        rows_to_insert.append((domain, str(e)))
             else:
                 rows_to_insert.append((domain, "NONE"))
 
@@ -74,8 +74,7 @@ async def process(rows_to_insert):
         batch_writer(proc.stdin),
         batch_reader(proc.stdout, rows_to_insert))
     
-    print("len of rows to insert: " , len(rows_to_insert))
-    
+    print("len of rows to insert: " , len(rows_to_insert))    
 
 def update_big_table(dataset_id, table_id, bq_domain2ip_table):
     client = bigquery.Client()
@@ -238,7 +237,7 @@ def create_bq_table(dataset_id, table_id):
     query_str = ' SELECT P.pageid as pageid, R.requestid as requestid, \
                 P.url as site_url, R.url as load_url, NET.HOST(P.url) as site_domain, \
                 NET.HOST(R.url) as load_domain, P.cdn as site_cdn, \
-                R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType, "" as site_ip , "" as load_ip \
+                R._cdn_provider as load_cdn, R.type as type, R.mimeType as mimeType \
                 FROM httparchive.summary_pages.`{}` as P \
                 INNER JOIN httparchive.summary_requests.`{}` R ON CAST(R.pageid as INT64) = CAST(P.pageid as INT64)'.format(table_id, table_id)
     query = (
@@ -247,7 +246,7 @@ def create_bq_table(dataset_id, table_id):
     
     query_job = client.query (
         query,
-        location="US",
+        location = "US",
         job_config=job_config
     )
 
@@ -265,16 +264,15 @@ if __name__ == "__main__":
     bq_table_to_be_updated = sys.argv[1] 
     bq_domain2ip_table = "domain2ip"
     bq_domain_list = "domain_list"
-    '''
+    
     try:
         create_bq_table(dataset_id, bq_table_to_be_updated)
     except Exception as e:
         print(e)
         exit()
-    '''
-
-    get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
-    # fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
+    
+    # get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
+    fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
     # flag = True
     rows_to_insert = []
     asyncio.run(process(rows_to_insert))
@@ -298,4 +296,4 @@ if __name__ == "__main__":
     #     run_aggregation_query(dataset_id, bq_domain2ip_table)
     # else:
     #     print(f"flag: {flag} --> No aggregation needed")
-    update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
+    # update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
