@@ -32,7 +32,7 @@ async def batch_writer(file_in):
     file_in.write_eof()
     await file_in.drain()
 
-async def batch_reader(file, rows_to_insert):
+async def batch_reader(file, rows_to_insert, rows_to_be_processed):
     while True:
         line = await file.readline()
         if not line:
@@ -48,13 +48,12 @@ async def batch_reader(file, rows_to_insert):
         except:
             if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
                 for a in data['data']['answers']:
-                    print(domain, a)
                     try:
                         rows_to_insert.append((domain, a['answer'].strip('.')))
                     except Exception as e:
-                        rows_to_insert.append((domain, str(e)))
+                        rows_to_be_processed.append((domain, str(e)))
             else:
-                rows_to_insert.append((domain, "NONE"))
+                rows_to_be_processed.append((domain, "NONE"))
 
     if len(rows_to_insert):
         print(f"inserted {len(rows_to_insert)}, done")
@@ -66,13 +65,13 @@ def batch(iterable, n=1):
     for ndx in range(0, l, n):
         yield iterable[ndx:min(ndx + n, l)]
 
-async def process(rows_to_insert):
+async def process(rows_to_insert, rows_to_be_processed):
     proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
                     
     await asyncio.gather(
         batch_writer(proc.stdin),
-        batch_reader(proc.stdout, rows_to_insert))
+        batch_reader(proc.stdout, rows_to_insert, rows_to_be_processed))
     
     print("len of rows to insert: " , len(rows_to_insert))    
 
@@ -263,6 +262,7 @@ if __name__ == "__main__":
     dataset_id = "subsetting"
     bq_table_to_be_updated = sys.argv[1] 
     bq_domain2ip_table = "domain2ip"
+    bq_domain2ip_process_table = "domain2ip_to_process"
     bq_domain_list = "domain_list"
     
     try:
@@ -273,27 +273,28 @@ if __name__ == "__main__":
     
     # get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
     fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
-    # flag = True
+
     rows_to_insert = []
-    asyncio.run(process(rows_to_insert))
+    rows_to_be_processed = []
+    asyncio.run(process(rows_to_insert, rows_to_be_processed))
 
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table(bq_domain2ip_table)
     table = client.get_table(table_ref) 
 
-    # if len(rows_to_insert) == 0:
-    #     flag = False
-    
     for row in batch(rows_to_insert, 1000):
         try:
             errors = client.insert_rows(table, row)
             print("errors: ", errors)
         except Exception as e:
             print("Insert row exception: ", e)
-            # flag = False
-    
-    # if flag:
-    #     run_aggregation_query(dataset_id, bq_domain2ip_table)
-    # else:
-    #     print(f"flag: {flag} --> No aggregation needed")
-    # update_big_table(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
+
+    table_ref = client.dataset(dataset_id).table(bq_domain2ip_process_table)
+    table = client.get_table(table_ref) 
+
+    for row in batch(rows_to_be_processed, 1000):
+        try:
+            errors = client.insert_rows(table, row)
+            print("errors: ", errors)
+        except Exception as e:
+            print("Insert row process exception: ", e)
