@@ -1,13 +1,18 @@
-import sys
+import sys, json, os
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud import bigquery_storage_v1beta1
+from difflib import SequenceMatcher
+
+if len(sys.argv) < 3:
+    print("enter sql file and table to be analyzed")
+    exit()
 
 client = bigquery.Client()
 project_id = 'ipprivacy'
 dataset_id = 'subsetting'
 domain2ip = 'domain2ip'
-table_analyzed = '2019_05_01_desktop'
+table_analyzed = sys.argv[2]
 site_domains = table_analyzed+'_site_domains'
 ip_anonsets = table_analyzed+'_ip_anonsets'
 
@@ -50,22 +55,92 @@ def executeQuery(query_str, idx):
         job_config=job_config
     )
     query_job.result()
-    with open(str(idx)+'.txt', "w+") as f:
+    with open("./"+table_analyzed+"/"+str(idx)+'.txt', "w+") as f:
+        print(query_str, file = f)
+        print('\n\n', file = f)
         for row in query_job:
             print(row, file = f)
             print('\n', file = f)
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 2:
-        print("enter sql file")
-        exit()
+    # define the name of the directory to be created
+    path = "./{}".format(table_analyzed)
+
+    try:
+        os.mkdir(path)
+    except OSError:
+        print ("Creation of the directory %s failed" % path)
+    else:
+        print ("Successfully created the directory %s " % path)
 
     site_domains_sql = "select distinct load_domain, pageid from `{}.{}.{}` where load_domain is not null;".format(project_id,
     dataset_id, table_analyzed)
-    #createTable(site_domains, site_domains_sql)
+    createTable(site_domains, site_domains_sql)
 
     ip_anonsets_sql = "select ip, count(distinct(domain)) as cnt from `{}.{}.{}` group by ip;".format(project_id,dataset_id,domain2ip)
-    #createTable(ip_anonsets, ip_anonsets_sql)
+    createTable(ip_anonsets, ip_anonsets_sql)
 
     getQuery()
+    
+    # following is for domain to cdn insertions of older tables
+
+    '''
+    query_str = "select distinct(domain) from ipprivacy.subsetting.domain2ip"
+    job_config = bigquery.QueryJobConfig()
+    query = (
+        query_str
+    )
+    query_job = client.query (
+        query,
+        location="US",
+        job_config=job_config
+    )
+    query_job.result()
+
+    cdn_map = []
+    rows_to_insert = []
+    with open('../input/cnamechain.json') as f:
+        cdn_map = json.load(f)
+
+    print(cdn_map)
+    def get_cdn(answer, cdn_map):
+        #print("here")
+        lengths = []
+        for key in cdn_map:
+            print(key)
+            match = SequenceMatcher(None, key[0], answer).find_longest_match(0, len(key[0]), 0, len(answer))
+            print("match: ", match)
+            lengths.append(len(key[0][match.a: match.a + match.size]))
+        maxLen = max(lengths)
+        index = lengths.index(maxLen)
+        return cdn_map[index][1]
+
+    for row in query_job:
+        try:
+            domain = row['domain']
+            cdn = get_cdn(domain, cdn_map)
+            print("domain: ", domain, "cdn: ", cdn)
+            if len(cdn) > 0:
+                rows_to_insert.append((domain, cdn))
+        except:
+            continue
+
+    client = bigquery.Client()
+    table_ref = client.dataset(dataset_id).table("domain2cdn")
+    table = client.get_table(table_ref) 
+
+    def batch(iterable, n=1):
+        l = len(iterable)
+        for ndx in range(0, l, n):
+            yield iterable[ndx:min(ndx + n, l)]
+    
+    for row in batch(rows_to_insert, 1000):
+        try:
+            errors = client.insert_rows(table, row)
+            print("errors: ", errors)
+        except Exception as e:
+            print("Insert row exception: ", e)
+    '''
+
+        
