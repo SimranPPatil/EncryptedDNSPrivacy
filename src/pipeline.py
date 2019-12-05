@@ -44,7 +44,7 @@ async def batch_reader(file, rows_to_insert):
         try:
             ip_obtained = IP(domain)
             print("ip_ob: " , domain, ip_obtained)
-            rows_to_insert.append((domain, ip_obtained))
+            rows_to_insert.append((domain, domain))
         except:
             if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
                 for a in data['data']['answers']:
