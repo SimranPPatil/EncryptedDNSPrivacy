@@ -49,6 +49,8 @@ def get_cdn_mappings(rows_to_insert):
             continue
 
 def populate_domain2cdn(rows_to_insert):
+    project_id = "ipprivacy"
+    dataset_id = "subsetting"
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table("domain2cdn")
     table = client.get_table(table_ref) 
