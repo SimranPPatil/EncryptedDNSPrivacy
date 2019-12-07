@@ -24,7 +24,9 @@ def batch(iterable, n=1):
 
 def get_cdn_mappings(rows_to_insert):
     client = bigquery.Client()
-    query_str = "select distinct(domain) from ipprivacy.subsetting.domain2ip"
+    query_str = "select domain from (select distinct(domain) as domain\
+            from ipprivacy.subsetting.domain2ip) sub where domain not in\
+            (select distinct(domain) from ipprivacy.subsetting.domain2cdn)"
     job_config = bigquery.QueryJobConfig()
     query = (
         query_str
