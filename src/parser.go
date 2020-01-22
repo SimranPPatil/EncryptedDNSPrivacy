@@ -10,11 +10,12 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/teamnsrg/mida/types"
 	"github.com/tidwall/gjson"
 )
 
 type parsedData struct {
-RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr string
+	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr string
 }
 
 func main() {
@@ -44,7 +45,7 @@ func main() {
 	owg.Add(1)
 	go output(resultChan, "output.json", &owg)
 
-	for i:=0; i<WORKERS; i++ {
+	for i := 0; i < WORKERS; i++ {
 		wg.Add(1)
 		go worker(filenameChan, resultChan, &wg)
 	}
@@ -53,14 +54,13 @@ func main() {
 		filenameChan <- path.Join(rootPath, dir.Name(), "resource_metadata.json")
 	}
 
-
 	/*
-	outfile, err := os.OpenFile("test.json", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-	if err != nil {
-		log.Fatalf("failed opening file: %s", err)
-	}
-	defer outfile.Close()
-	 */
+		outfile, err := os.OpenFile("test.json", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+		defer outfile.Close()
+	*/
 
 	close(filenameChan)
 	wg.Wait()
@@ -71,18 +71,28 @@ func main() {
 	log.Info("End")
 }
 
-
 func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitGroup) {
 
 	for fName := range filenameChan {
 
-		file, e := ioutil.ReadFile(fName)
+		data, e := ioutil.ReadFile(fName)
 		if e != nil {
 			fmt.Printf("File error: %v\n", e)
 			os.Exit(1)
 		}
 
-		myJSON := string(file)
+		myJSON := string(data)
+
+		var resources map[string]types.Resource
+
+		err := json.Unmarshal(data, &resources)
+		if err != nil {
+			log.Error(err)
+		}
+
+		for k := range resources {
+			log.Info(resources[k].Requests[0].DocumentURL)
+		}
 
 		m, ok := gjson.Parse(myJSON).Value().(map[string]interface{})
 		if !ok {
@@ -127,14 +137,14 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 				resultChan <- pd
 
 				/*
-				b, _ := json.Marshal(pd)
-				fmt.Println(string(b))
-				len, err := outfile.WriteString(string(b) + "\r\n")
-				if err != nil {
-					log.Fatalf("failed writing to outfile: %s", err)
-				}
-				fmt.Printf("\nLength: %d bytes", len)
-				fmt.Printf("\noutfile Name: %s", outfile.Name())
+					b, _ := json.Marshal(pd)
+					fmt.Println(string(b))
+					len, err := outfile.WriteString(string(b) + "\r\n")
+					if err != nil {
+						log.Fatalf("failed writing to outfile: %s", err)
+					}
+					fmt.Printf("\nLength: %d bytes", len)
+					fmt.Printf("\noutfile Name: %s", outfile.Name())
 				*/
 			}
 		}
@@ -144,8 +154,7 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 	wg.Done()
 }
 
-
-func output (resultChan chan parsedData, ofName string, owg *sync.WaitGroup) {
+func output(resultChan chan parsedData, ofName string, owg *sync.WaitGroup) {
 
 	f, err := os.Create(ofName)
 	if err != nil {
