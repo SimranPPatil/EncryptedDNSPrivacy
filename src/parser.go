@@ -8,28 +8,52 @@ import (
 	"os"
 	"path"
 	"sync"
+	"time"
 
+	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	log "github.com/sirupsen/logrus"
 	"github.com/teamnsrg/mida/types"
-	"github.com/tidwall/gjson"
 )
 
 type parsedData struct {
 	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr string
 }
 
+func init() {
+	formatter := runtime.Formatter{ChildFormatter: &log.TextFormatter{}}
+	formatter.Line = true
+	log.SetFormatter(&formatter)
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+}
+
 func main() {
+
+	if len(os.Args) != 2 {
+		log.Error("Usage: ./parser path/to/folder_with_sites")
+		return
+	}
+
 	log.Info("Start")
 
 	filenameChan := make(chan string)
 	resultChan := make(chan parsedData)
 
-	if len(os.Args) != 2 {
-		log.Error("Usage: ./parser path/to/site")
-		return
-	}
-
 	rootPath := os.Args[1]
+
+	WORKERS := 5
+
+	var wg sync.WaitGroup
+	var owg sync.WaitGroup
+
+	now := time.Now().Format("01-02-2006")
+	owg.Add(1)
+	go output(resultChan, now+"_output.json", &owg)
+
+	for i := 0; i < WORKERS; i++ {
+		wg.Add(1)
+		go worker(filenameChan, resultChan, &wg)
+	}
 
 	dirs, err := ioutil.ReadDir(rootPath)
 	if err != nil {
@@ -37,30 +61,18 @@ func main() {
 		return
 	}
 
-	WORKERS := 5
-
-	var wg sync.WaitGroup
-	var owg sync.WaitGroup
-
-	owg.Add(1)
-	go output(resultChan, "output.json", &owg)
-
-	for i := 0; i < WORKERS; i++ {
-		wg.Add(1)
-		go worker(filenameChan, resultChan, &wg)
-	}
-
 	for _, dir := range dirs {
-		filenameChan <- path.Join(rootPath, dir.Name(), "resource_metadata.json")
-	}
-
-	/*
-		outfile, err := os.OpenFile("test.json", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+		pathSub := path.Join(rootPath, dir.Name())
+		subdirs, err := ioutil.ReadDir(pathSub)
 		if err != nil {
-			log.Fatalf("failed opening file: %s", err)
+			log.Error(err, pathSub)
+			continue
 		}
-		defer outfile.Close()
-	*/
+
+		for _, subdir := range subdirs {
+			filenameChan <- path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json")
+		}
+	}
 
 	close(filenameChan)
 	wg.Wait()
@@ -81,8 +93,6 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 			os.Exit(1)
 		}
 
-		myJSON := string(data)
-
 		var resources map[string]types.Resource
 
 		err := json.Unmarshal(data, &resources)
@@ -91,64 +101,35 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 		}
 
 		for k := range resources {
-			log.Info(resources[k].Requests[0].DocumentURL)
-		}
 
-		m, ok := gjson.Parse(myJSON).Value().(map[string]interface{})
-		if !ok {
-			fmt.Println("Error")
-		}
+			Responses := resources[k].Responses
 
-		for requestID, v := range m {
-			responses := v.(map[string]interface{})["responses"].([]interface{})
-			for _, entry := range responses {
-				loadURL := entry.(map[string]interface{})["response"].(map[string]interface{})["url"]
-				loadurl := fmt.Sprintf("%v", loadURL)
-				u, err := url.Parse(loadurl)
+			for _, response := range Responses {
+
+				RequestID := response.RequestID
+				MimeType := response.Response.MimeType
+				Type := response.Type
+				RemoteIPAddress := response.Response.RemoteIPAddress
+
+				LoadURL := response.Response.URL
+				u, err := url.Parse(LoadURL)
 				if err != nil {
-					panic(err)
+					log.Error(err)
 				}
-				loadDomain := u.Host
-				Type := entry.(map[string]interface{})["type"]
-				mimeType := entry.(map[string]interface{})["response"].(map[string]interface{})["mimeType"]
-				remoteIPAddress := entry.(map[string]interface{})["response"].(map[string]interface{})["remoteIPAddress"]
-				// siteURL := entry.(map[string]interface{})["response"].(map[string]interface{})["requestHeaders"]
-				// siteurl := fmt.Sprintf("%v", siteURL)
-				// u, err = url.Parse(siteurl)
-				// if err != nil {
-				// 	panic(err)
-				// }
-				// siteDomain := u.Host
-				// fmt.Println("siteURL: ", siteURL)
-				// fmt.Println("siteDomain: ", siteDomain)
-				datatype := fmt.Sprintf("%v", Type)
-				datamimeType := fmt.Sprintf("%v", mimeType)
-				ip := fmt.Sprintf("%v", remoteIPAddress)
+				LoadDomain := u.Host
 
 				pd := parsedData{
-					RequestID:    requestID,
-					LoadURL:      loadurl,
-					LoadDomain:   loadDomain,
-					Type:         datatype,
-					MimeType:     datamimeType,
-					RemoteIPAddr: ip,
+					RequestID:    RequestID.String(),
+					LoadURL:      LoadURL,
+					LoadDomain:   LoadDomain,
+					Type:         Type.String(),
+					MimeType:     MimeType,
+					RemoteIPAddr: RemoteIPAddress,
 				}
 
 				resultChan <- pd
-
-				/*
-					b, _ := json.Marshal(pd)
-					fmt.Println(string(b))
-					len, err := outfile.WriteString(string(b) + "\r\n")
-					if err != nil {
-						log.Fatalf("failed writing to outfile: %s", err)
-					}
-					fmt.Printf("\nLength: %d bytes", len)
-					fmt.Printf("\noutfile Name: %s", outfile.Name())
-				*/
 			}
 		}
-
 	}
 
 	wg.Done()
@@ -164,12 +145,11 @@ func output(resultChan chan parsedData, ofName string, owg *sync.WaitGroup) {
 
 	for result := range resultChan {
 		b, _ := json.Marshal(result)
-		_, err = f.WriteString(string(b) + "\r\n")
+		_, err = fmt.Fprintln(f, string(b))
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	owg.Done()
-
 }
