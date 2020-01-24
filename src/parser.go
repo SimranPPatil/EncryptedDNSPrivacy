@@ -98,6 +98,7 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 		err := json.Unmarshal(data, &resources)
 		if err != nil {
 			log.Error(err)
+			continue
 		}
 
 		for k := range resources {
@@ -113,12 +114,11 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 
 				LoadURL := response.Response.URL
 				u, err := url.Parse(LoadURL)
-				LoadDomain := ""
 				if err != nil {
 					log.Fatal(err)
-				} else {
-					LoadDomain = u.Host
+					continue
 				}
+				LoadDomain := u.Host
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
@@ -150,6 +150,7 @@ func output(resultChan chan parsedData, ofName string, owg *sync.WaitGroup) {
 		_, err = fmt.Fprintln(f, string(b))
 		if err != nil {
 			log.Error(err)
+			continue
 		}
 	}
 
