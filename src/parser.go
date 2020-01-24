@@ -113,10 +113,12 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 
 				LoadURL := response.Response.URL
 				u, err := url.Parse(LoadURL)
+				LoadDomain := ""
 				if err != nil {
-					log.Error(err)
+					log.Fatal(err)
+				} else {
+					LoadDomain = u.Host
 				}
-				LoadDomain := u.Host
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
