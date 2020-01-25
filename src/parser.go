@@ -117,7 +117,8 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 				u, err := url.Parse(LoadURL)
 				if err != nil {
 					log.Error(err)
-					u, err = url.Parse(strings.Join(strings.Split(LoadURL, "/")[:5], "/"))
+					log.Info(strings.Join(strings.Split(LoadURL, "/")[:3], "/"))
+					u, err = url.Parse(strings.Join(strings.Split(LoadURL, "/")[:3], "/"))
 					if err != nil {
 						log.Error(err)
 						continue
