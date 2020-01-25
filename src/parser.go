@@ -42,7 +42,7 @@ func main() {
 
 	rootPath := os.Args[1]
 
-	WORKERS := 5
+	WORKERS := 32
 
 	var wg sync.WaitGroup
 	var owg sync.WaitGroup
@@ -91,7 +91,7 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 		data, e := ioutil.ReadFile(fName)
 		if e != nil {
 			fmt.Printf("File error: %v\n", e)
-			os.Exit(1)
+			continue
 		}
 
 		var resources map[string]types.Resource
@@ -118,7 +118,6 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 				if err != nil {
 					log.Error(err)
 					u, err = url.Parse(strings.Join(strings.Split(LoadURL, "/")[:5], "/"))
-					log.Info("Parsed: ", u)
 					if err != nil {
 						log.Error(err)
 						continue
