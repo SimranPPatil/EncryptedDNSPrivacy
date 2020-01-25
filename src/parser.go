@@ -48,8 +48,9 @@ func main() {
 	var owg sync.WaitGroup
 
 	now := time.Now().Format("01-02-2006")
+	last := strings.Split(rootPath, "/")
 	owg.Add(1)
-	go output(resultChan, now+"_output.json", &owg)
+	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &owg)
 
 	for i := 0; i < WORKERS; i++ {
 		wg.Add(1)
