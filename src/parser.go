@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 	"sync"
 	"time"
 
@@ -115,8 +116,13 @@ func worker(filenameChan chan string, resultChan chan parsedData, wg *sync.WaitG
 				LoadURL := response.Response.URL
 				u, err := url.Parse(LoadURL)
 				if err != nil {
-					log.Fatal(err)
-					continue
+					log.Error(err)
+					u, err = url.Parse(strings.Join(strings.Split(LoadURL, "/")[:5], "/"))
+					log.Info("Parsed: ", u)
+					if err != nil {
+						log.Error(err)
+						continue
+					}
 				}
 				LoadDomain := u.Host
 
