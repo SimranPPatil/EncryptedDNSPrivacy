@@ -1,7 +1,11 @@
+import os
 import sys
 import json
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using non-interactive Agg backend')
+    mpl.use('Agg')
 import matplotlib.pyplot as plt
-matplotlib.use('Agg')
 
 def get_domain_frequency(filepath, domain_frequency):
     with open(filepath, "r") as f:
