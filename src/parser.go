@@ -167,6 +167,7 @@ func worker(
 				LoadDomain := u.Host
 
 				FileInfo, _ := os.Stat(fName)
+				log.Info(FileInfo.ModTime().Format("01-06-2006"))
 				if FileInfo.ModTime().Format("01-06-2006") == os.Args[2] {
 					singlefreqChan <- LoadDomain
 				}
