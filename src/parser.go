@@ -175,7 +175,7 @@ func worker(
 
 				FileInfo, _ := os.Stat(fName)
 				ModTime := FileInfo.ModTime().Format("01-06-2006")
-				log.Info(FileInfo)
+				log.Info(FileInfo.ModTime().Format("01-06-2006"))
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
