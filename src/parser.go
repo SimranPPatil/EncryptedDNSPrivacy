@@ -13,13 +13,12 @@ import (
 	"time"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
-	"github.com/go-echarts/go-echarts/charts"
 	log "github.com/sirupsen/logrus"
 	"github.com/teamnsrg/mida/types"
 )
 
 type parsedData struct {
-	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr string
+	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr, ModTime string
 }
 
 func init() {
@@ -41,31 +40,25 @@ func main() {
 
 	filenameChan := make(chan string)
 	resultChan := make(chan parsedData)
-	singlefreqChan := make(chan string)
 
 	rootPath := os.Args[1]
 
 	WORKERS := 32
 
+	domainSets := make(map[string]map[string]bool)
+
 	var wg sync.WaitGroup
 	var owg sync.WaitGroup
-	var fwg sync.WaitGroup
 
 	now := time.Now().Format("01-02-2006")
 	last := strings.Split(rootPath, "/")
 
-	singlefreq := map[string]int{}
-	allfreq := map[string]int{}
-
 	owg.Add(1)
-	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &owg, &allfreq)
-
-	fwg.Add(1)
-	go frequency(singlefreqChan, &fwg, &singlefreq)
+	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &domainSets, &owg)
 
 	for i := 0; i < WORKERS; i++ {
 		wg.Add(1)
-		go worker(filenameChan, resultChan, singlefreqChan, &wg)
+		go worker(filenameChan, resultChan, &wg)
 	}
 
 	dirs, err := ioutil.ReadDir(rootPath)
@@ -95,33 +88,43 @@ func main() {
 	close(filenameChan)
 	wg.Wait()
 
-	close(singlefreqChan)
-	fwg.Wait()
-
 	close(resultChan)
 	owg.Wait()
 
-	// get domains from allfreq and plot for both frequencies for these domain
-	single := []int{}
-	multiple := []int{}
-	domains := []string{}
+	/*
+		// get domains from allfreq and plot for both frequencies for these domain
+		single := []int{}
+		multiple := []int{}
+		domains := []string{}
 
-	bar := charts.NewBar()
-	for domain := range allfreq {
-		_, found := singlefreq[domain]
-		if found {
-			domains = append(domains, domain)
-			single = append(single, singlefreq[domain])
-			multiple = append(multiple, allfreq[domain])
+		bar := charts.NewBar()
+		for domain := range allfreq {
+			_, found := singlefreq[domain]
+			if found {
+				domains = append(domains, domain)
+				single = append(single, singlefreq[domain])
+				multiple = append(multiple, allfreq[domain])
+			}
 		}
+		bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
+		bar.AddXAxis(domains).AddYAxis("single", single).AddYAxis("over time", multiple)
+		graph, err := os.Create("bar.html")
+		if err != nil {
+			log.Error("plotting error")
+		}
+		bar.Render(graph)
+	*/
+
+	keys := make([]string, 0, len(domainSets))
+	for k := range domainSets {
+		keys = append(keys, k)
 	}
-	bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
-	bar.AddXAxis(domains).AddYAxis("single", single).AddYAxis("over time", multiple)
-	graph, err := os.Create("bar.html")
-	if err != nil {
-		log.Error("plotting error")
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		fmt.Println(k)
+		//temp := domainSets[k]
 	}
-	bar.Render(graph)
 
 	log.Info("End")
 }
@@ -129,7 +132,6 @@ func main() {
 func worker(
 	filenameChan chan string,
 	resultChan chan parsedData,
-	singlefreqChan chan string,
 	wg *sync.WaitGroup) {
 
 	for fName := range filenameChan {
@@ -172,10 +174,7 @@ func worker(
 				LoadDomain := u.Host
 
 				FileInfo, _ := os.Stat(fName)
-				log.Info(FileInfo.ModTime().Format("01-06-2006"))
-				if FileInfo.ModTime().Format("01-06-2006") == os.Args[2] {
-					singlefreqChan <- LoadDomain
-				}
+				ModTime := FileInfo.ModTime().Format("01-06-2006")
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
@@ -184,6 +183,7 @@ func worker(
 					Type:         Type.String(),
 					MimeType:     MimeType,
 					RemoteIPAddr: RemoteIPAddress,
+					ModTime:      ModTime,
 				}
 
 				resultChan <- pd
@@ -194,28 +194,11 @@ func worker(
 	wg.Done()
 }
 
-func frequency(
-	singlefreqChan chan string,
-	fwg *sync.WaitGroup,
-	singlefreq *map[string]int) {
-
-	for domain := range singlefreqChan {
-		_, found := (*singlefreq)[domain]
-		if found == true {
-			(*singlefreq)[domain]++
-		} else {
-			(*singlefreq)[domain] = 1
-		}
-	}
-
-	fwg.Done()
-}
-
 func output(
 	resultChan chan parsedData,
 	ofName string,
-	owg *sync.WaitGroup,
-	allfreq *map[string]int) {
+	domainSets *map[string]map[string]bool,
+	owg *sync.WaitGroup) {
 
 	f, err := os.Create(ofName)
 	if err != nil {
@@ -231,12 +214,11 @@ func output(
 			continue
 		}
 
-		_, found := (*allfreq)[result.LoadDomain]
-		if found == true {
-			(*allfreq)[result.LoadDomain]++
-		} else {
-			(*allfreq)[result.LoadDomain] = 1
+		_, found := (*domainSets)[result.ModTime]
+		if found == false {
+			(*domainSets)[result.ModTime] = make(map[string]bool)
 		}
+		((*domainSets)[result.ModTime])[result.LoadDomain] = true
 	}
 
 	owg.Done()
