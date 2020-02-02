@@ -84,7 +84,7 @@ func main() {
 			FileInfo, _ := os.Stat(subdir.Name())
 			statT := FileInfo.Sys().(*syscall.Stat_t)
 
-			ModTime := FileInfo.ModTime().Format("01-06-2006")
+			// ModTime := FileInfo.ModTime().Format("01-06-2006")
 			log.Info(
 				subdir.Name(), "\n",
 				FileInfo.ModTime().Format("01-06-2006"), "\n",
