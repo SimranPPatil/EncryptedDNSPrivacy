@@ -85,7 +85,7 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime())
+			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime(), " string: ", strings.Split(subdir.ModTime().String(), " ")[0])
 			fileInfo := fileInformation{
 				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
 				fileCTime: subdir.ModTime(),
