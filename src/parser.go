@@ -81,17 +81,7 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			FileInfo, _ := os.Stat(path.Join(rootPath, dir.Name(), subdir.Name()))
-			statT := FileInfo.Sys().(*syscall.Stat_t)
-
-			// ModTime := FileInfo.ModTime().Format("01-06-2006")
-			log.Info(
-				subdir.Name(), "\n",
-				FileInfo.ModTime().Format("01-06-2006"), "\n",
-				timespecToTime(statT.Atim), "\n",
-				timespecToTime(statT.Ctim), "\n",
-				timespecToTime(statT.Mtim), "\n")
-			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), subdir.ModTime())
+			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime())
 			filenameChan <- path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json")
 		}
 	}
