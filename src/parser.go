@@ -84,7 +84,7 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime(), " string: ", strings.Split(subdir.ModTime().String(), " ")[0])
+			// log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime(), " string: ", strings.Split(subdir.ModTime().String(), " ")[0])
 			fileInfo := fileInformation{
 				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
 				fileCTime: strings.Split(subdir.ModTime().String(), " ")[0],
@@ -130,8 +130,9 @@ func main() {
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		fmt.Println(k, len(domainSets[k]))
-		//temp := domainSets[k]
+		for domain := range domainSets[k] {
+			log.Info("Date: ", k, "Domain: ", domain)
+		}
 	}
 
 	log.Info("End")
