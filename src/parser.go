@@ -81,7 +81,7 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			FileInfo, _ := os.Stat(subdir.Name())
+			FileInfo, _ := os.Stat(path.Join(rootPath, dir.Name(), subdir.Name()))
 			statT := FileInfo.Sys().(*syscall.Stat_t)
 
 			// ModTime := FileInfo.ModTime().Format("01-06-2006")
