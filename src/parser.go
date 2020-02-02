@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -81,8 +82,12 @@ func main() {
 			log.Error(err, pathSub)
 			continue
 		}
+		sort.Slice(subdirs, func(i, j int) bool {
+			return subdirs[i].ModTime().Before(subdirs[j].ModTime())
+		})
 
 		for _, subdir := range subdirs {
+			fmt.Println(subdir.Name(), subdir.ModTime())
 			filenameChan <- path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json")
 		}
 	}
