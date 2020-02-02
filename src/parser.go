@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
@@ -129,6 +130,10 @@ func main() {
 	log.Info("End")
 }
 
+func timespecToTime(ts syscall.Timespec) time.Time {
+	return time.Unix(int64(ts.Sec), int64(ts.Nsec))
+}
+
 func worker(
 	filenameChan chan string,
 	resultChan chan parsedData,
@@ -174,8 +179,15 @@ func worker(
 				LoadDomain := u.Host
 
 				FileInfo, _ := os.Stat(fName)
+				statT := FileInfo.Sys().(*syscall.Stat_t)
+
 				ModTime := FileInfo.ModTime().Format("01-06-2006")
-				log.Info(fName, FileInfo.ModTime().Format("01-06-2006"))
+				log.Info(
+					fName, " ",
+					FileInfo.ModTime().Format("01-06-2006"), " ",
+					timespecToTime(statT.Atimespec), " ",
+					timespecToTime(statT.Ctimespec), " ",
+					timespecToTime(statT.Mtimespec))
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
