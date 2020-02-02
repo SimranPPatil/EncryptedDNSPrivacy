@@ -13,6 +13,7 @@ import (
 	"time"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+	"github.com/go-echarts/go-echarts/charts"
 	log "github.com/sirupsen/logrus"
 	"github.com/teamnsrg/mida/types"
 )
@@ -99,41 +100,26 @@ func main() {
 	close(resultChan)
 	owg.Wait()
 
-	/*
-		// get domains from allfreq and plot for both frequencies for these domain
-		single := []int{}
-		multiple := []int{}
-		domains := []string{}
-
-		bar := charts.NewBar()
-		for domain := range allfreq {
-			_, found := singlefreq[domain]
-			if found {
-				domains = append(domains, domain)
-				single = append(single, singlefreq[domain])
-				multiple = append(multiple, allfreq[domain])
-			}
-		}
-		bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
-		bar.AddXAxis(domains).AddYAxis("single", single).AddYAxis("over time", multiple)
-		graph, err := os.Create("bar.html")
-		if err != nil {
-			log.Error("plotting error")
-		}
-		bar.Render(graph)
-	*/
-
 	keys := make([]string, 0, len(domainSets))
+	domainFreq := make([]int, 0, len(domainSets))
+
 	for k := range domainSets {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		for domain := range domainSets[k] {
-			log.Info("Date: ", k, "Domain: ", domain)
-		}
+		domainFreq = append(domainFreq, len(domainSets[k]))
 	}
+
+	bar := charts.NewBar()
+	bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
+	bar.AddXAxis(keys).AddYAxis("Frequency", domainFreq)
+	graph, err := os.Create("bar.html")
+	if err != nil {
+		log.Error("plotting error")
+	}
+	bar.Render(graph)
 
 	log.Info("End")
 }
