@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -18,11 +17,13 @@ import (
 )
 
 type parsedData struct {
-	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr, ModTime string
+	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr string
+	ModTime                                                      time.Time
 }
 
 type fileInformation struct {
-	fileName, fileCTime string
+	fileName  string
+	fileCTime time.Time
 }
 
 func init() {
@@ -49,7 +50,7 @@ func main() {
 
 	WORKERS := 32
 
-	domainSets := make(map[string]map[string]bool)
+	domainSets := make(map[time.Time]map[string]bool)
 
 	var wg sync.WaitGroup
 	var owg sync.WaitGroup
@@ -84,10 +85,10 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime().Format("01-06-2006"))
+			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime())
 			fileInfo := fileInformation{
 				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
-				fileCTime: subdir.ModTime().Format("01-06-2006"),
+				fileCTime: subdir.ModTime(),
 			}
 			filenameChan <- fileInfo
 		}
@@ -123,16 +124,16 @@ func main() {
 		bar.Render(graph)
 	*/
 
-	keys := make([]string, 0, len(domainSets))
-	for k := range domainSets {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
+	// keys := make([]time.Time, 0, len(domainSets))
+	// for k := range domainSets {
+	// 	keys = append(keys, k)
+	// }
+	// sort.Strings(keys)
 
-	for _, k := range keys {
-		fmt.Println(k, len(domainSets[k]))
-		//temp := domainSets[k]
-	}
+	// for _, k := range keys {
+	// 	fmt.Println(k, len(domainSets[k]))
+	// 	//temp := domainSets[k]
+	// }
 
 	log.Info("End")
 }
@@ -202,7 +203,7 @@ func worker(
 func output(
 	resultChan chan parsedData,
 	ofName string,
-	domainSets *map[string]map[string]bool,
+	domainSets *map[time.Time]map[string]bool,
 	owg *sync.WaitGroup) {
 
 	f, err := os.Create(ofName)
