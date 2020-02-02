@@ -130,8 +130,8 @@ func main() {
 	log.Info("End")
 }
 
-func timespecToTime(ts syscall.Timespec) time.Time {
-	return time.Unix(int64(ts.Sec), int64(ts.Nsec))
+func timespecToTime(ts syscall.Timespec) string {
+	return time.Unix(int64(ts.Sec), int64(ts.Nsec)).Format("01-06-2006")
 }
 
 func worker(
@@ -185,9 +185,9 @@ func worker(
 				log.Info(
 					fName, " ",
 					FileInfo.ModTime().Format("01-06-2006"), " ",
-					timespecToTime(statT.Atimespec), " ",
-					timespecToTime(statT.Ctimespec), " ",
-					timespecToTime(statT.Mtimespec))
+					timespecToTime(statT.Atim), " ",
+					timespecToTime(statT.Ctim), " ",
+					timespecToTime(statT.Mtim))
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
