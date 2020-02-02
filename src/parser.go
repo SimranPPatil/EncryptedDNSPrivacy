@@ -31,8 +31,8 @@ func init() {
 
 func main() {
 
-	if len(os.Args) != 3 {
-		log.Error("Usage: ./parser path/to/folder_with_sites 10-01-2019")
+	if len(os.Args) != 2 {
+		log.Error("Usage: ./parser path/to/folder_with_sites")
 		return
 	}
 
@@ -80,7 +80,7 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			//fmt.Println(subdir.Name(), subdir.ModTime())
+			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), subdir.ModTime())
 			filenameChan <- path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json")
 		}
 	}
