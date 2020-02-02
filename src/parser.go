@@ -178,16 +178,18 @@ func worker(
 				}
 				LoadDomain := u.Host
 
-				FileInfo, _ := os.Stat(fName)
+				FileDir := strings.Replace(fName, "/resource_metadata.json", "", -1)
+				FileInfo, _ := os.Stat(FileDir)
 				statT := FileInfo.Sys().(*syscall.Stat_t)
 
 				ModTime := FileInfo.ModTime().Format("01-06-2006")
 				log.Info(
-					fName, " ",
-					FileInfo.ModTime().Format("01-06-2006"), " ",
-					timespecToTime(statT.Atim), " ",
-					timespecToTime(statT.Ctim), " ",
-					timespecToTime(statT.Mtim))
+					fName, "\n",
+					FileDir, "\n",
+					FileInfo.ModTime().Format("01-06-2006"), "\n",
+					timespecToTime(statT.Atim), "\n",
+					timespecToTime(statT.Ctim), "\n",
+					timespecToTime(statT.Mtim), "\n")
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
