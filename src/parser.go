@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
@@ -20,6 +19,10 @@ import (
 
 type parsedData struct {
 	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr, ModTime string
+}
+
+type fileInformation struct {
+	fileName, fileCTime string
 }
 
 func init() {
@@ -39,7 +42,7 @@ func main() {
 
 	log.Info("Start")
 
-	filenameChan := make(chan string)
+	filenameChan := make(chan fileInformation)
 	resultChan := make(chan parsedData)
 
 	rootPath := os.Args[1]
@@ -81,8 +84,12 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime())
-			filenameChan <- path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json")
+			log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime().Format("01-06-2006"))
+			fileInfo := fileInformation{
+				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
+				fileCTime: subdir.ModTime().Format("01-06-2006"),
+			}
+			filenameChan <- fileInfo
 		}
 	}
 
@@ -130,17 +137,13 @@ func main() {
 	log.Info("End")
 }
 
-func timespecToTime(ts syscall.Timespec) string {
-	return time.Unix(int64(ts.Sec), int64(ts.Nsec)).Format("01-06-2006")
-}
-
 func worker(
-	filenameChan chan string,
+	filenameChan chan fileInformation,
 	resultChan chan parsedData,
 	wg *sync.WaitGroup) {
 
 	for fName := range filenameChan {
-		data, e := ioutil.ReadFile(fName)
+		data, e := ioutil.ReadFile(fName.fileName)
 		if e != nil {
 			fmt.Printf("File error: %v\n", e)
 			continue
@@ -178,19 +181,6 @@ func worker(
 				}
 				LoadDomain := u.Host
 
-				FileDir := strings.Replace(fName, "/resource_metadata.json", "", -1)
-				FileInfo, _ := os.Stat(FileDir)
-				// statT := FileInfo.Sys().(*syscall.Stat_t)
-
-				ModTime := FileInfo.ModTime().Format("01-06-2006")
-				// log.Info(
-				// 	fName, "\n",
-				// 	FileDir, "\n",
-				// 	FileInfo.ModTime().Format("01-06-2006"), "\n",
-				// 	timespecToTime(statT.Atim), "\n",
-				// 	timespecToTime(statT.Ctim), "\n",
-				// 	timespecToTime(statT.Mtim), "\n")
-
 				pd := parsedData{
 					RequestID:    RequestID.String(),
 					LoadURL:      LoadURL,
@@ -198,7 +188,7 @@ func worker(
 					Type:         Type.String(),
 					MimeType:     MimeType,
 					RemoteIPAddr: RemoteIPAddress,
-					ModTime:      ModTime,
+					ModTime:      fName.fileCTime,
 				}
 
 				resultChan <- pd
