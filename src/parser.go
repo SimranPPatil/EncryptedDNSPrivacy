@@ -115,6 +115,7 @@ func main() {
 	bar := charts.NewBar()
 	bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
 	bar.AddXAxis(keys).AddYAxis("Frequency", domainFreq)
+	bar.XYReversal()
 	graph, err := os.Create("bar.html")
 	if err != nil {
 		log.Error("plotting error")
