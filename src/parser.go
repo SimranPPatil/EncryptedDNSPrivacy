@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -19,11 +22,11 @@ import (
 )
 
 type parsedData struct {
-	RequestID, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr, ModTime string
+	RequestID, Site, LoadURL, LoadDomain, Type, MimeType, RemoteIPAddr, ModTime string
 }
 
 type fileInformation struct {
-	fileName, fileCTime string
+	siteName, fileName, fileCTime string
 }
 
 func init() {
@@ -32,6 +35,60 @@ func init() {
 	log.SetFormatter(&formatter)
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
+}
+
+type kv struct {
+	Key   string
+	Value int
+}
+
+func rankbyDomainCount(domainCounts map[string]int) ([]string, []float64) {
+
+	var ss []kv
+	var totalOccurrences = 0
+	domains := make([]string, 0, len(domainCounts))
+	counters := make([]float64, 0.0, len(domainCounts))
+	for k, v := range domainCounts {
+		totalOccurrences += v
+		ss = append(ss, kv{k, v})
+	}
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Value > ss[j].Value
+	})
+
+	for _, kv := range ss {
+		domains = append(domains, kv.Key)
+		counters = append(counters, float64(kv.Value)/float64(totalOccurrences))
+	}
+
+	return domains, counters
+}
+
+func getAlexaSites(csvfilename string) map[string]bool {
+	csvfile, err := os.Open(csvfilename)
+	alexaTopFifty := make(map[string]bool)
+	if err != nil {
+		log.Error("Couldn't open the csv file", err)
+	}
+
+	reader := csv.NewReader(bufio.NewReader(csvfile))
+
+	for {
+		line, error := reader.Read()
+		if error == io.EOF {
+			break
+		} else if error != nil {
+			log.Fatal(error)
+		}
+		log.Info("line: ", line)
+		if line[0] == "50" {
+			break
+		}
+		alexaTopFifty[line[1]] = true
+	}
+
+	return alexaTopFifty
 }
 
 func main() {
@@ -43,6 +100,7 @@ func main() {
 
 	log.Info("Start")
 
+	alexaTopFifty := getAlexaSites("../input/alexa.csv")
 	filenameChan := make(chan fileInformation)
 	resultChan := make(chan parsedData)
 
@@ -50,7 +108,8 @@ func main() {
 
 	WORKERS := 32
 
-	domainSets := make(map[string]map[string]bool)
+	domainSets := make(map[string]map[string]map[string]bool)
+	siteToDomains := make(map[string]map[string]int)
 
 	var wg sync.WaitGroup
 	var owg sync.WaitGroup
@@ -59,7 +118,7 @@ func main() {
 	last := strings.Split(rootPath, "/")
 
 	owg.Add(1)
-	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &domainSets, &owg)
+	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &domainSets, &siteToDomains, &owg)
 
 	for i := 0; i < WORKERS; i++ {
 		wg.Add(1)
@@ -85,8 +144,8 @@ func main() {
 		// })
 
 		for _, subdir := range subdirs {
-			// log.Info(path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"), " modtime: ", subdir.ModTime(), " string: ", strings.Split(subdir.ModTime().String(), " ")[0])
 			fileInfo := fileInformation{
+				siteName:  dir.Name(),
 				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
 				fileCTime: strings.Split(subdir.ModTime().String(), " ")[0],
 			}
@@ -100,27 +159,27 @@ func main() {
 	close(resultChan)
 	owg.Wait()
 
-	keys := make([]string, 0, len(domainSets))
-	domainFreq := make([]int, 0, len(domainSets))
+	GraphFolderPath := "../output/"
 
-	for k := range domainSets {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
+	for site := range siteToDomains {
+		_, found := alexaTopFifty[site]
+		if found {
+			graphName := path.Join(GraphFolderPath, "bar"+"_plf_fraction_"+site+"_.html")
+			log.Info("Creating graph: ", graphName)
+			domainCounts := siteToDomains[site]
+			domains, counters := rankbyDomainCount(domainCounts)
 
-	for _, k := range keys {
-		domainFreq = append(domainFreq, len(domainSets[k]))
+			bar := charts.NewBar()
+			bar.SetGlobalOptions(charts.TitleOpts{Title: site, Bottom: "0%"}, charts.ToolboxOpts{Show: false})
+			bar.AddXAxis(domains).AddYAxis("Fraction of PLF per domain", counters)
+			bar.XYReversal()
+			graph, err := os.Create(graphName)
+			if err != nil {
+				log.Error("plotting error")
+			}
+			bar.Render(graph)
+		}
 	}
-
-	bar := charts.NewBar()
-	bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain frequency over time comparison"})
-	bar.AddXAxis(keys).AddYAxis("Frequency", domainFreq)
-	bar.XYReversal()
-	graph, err := os.Create("bar.html")
-	if err != nil {
-		log.Error("plotting error")
-	}
-	bar.Render(graph)
 
 	log.Info("End")
 }
@@ -152,6 +211,7 @@ func worker(
 			for _, response := range Responses {
 
 				RequestID := response.RequestID
+				Site := fName.siteName
 				MimeType := response.Response.MimeType
 				Type := response.Type
 				RemoteIPAddress := response.Response.RemoteIPAddress
@@ -171,6 +231,7 @@ func worker(
 
 				pd := parsedData{
 					RequestID:    RequestID.String(),
+					Site:         Site,
 					LoadURL:      LoadURL,
 					LoadDomain:   LoadDomain,
 					Type:         Type.String(),
@@ -190,7 +251,8 @@ func worker(
 func output(
 	resultChan chan parsedData,
 	ofName string,
-	domainSets *map[string]map[string]bool,
+	domainSets *map[string]map[string]map[string]bool,
+	siteToDomains *map[string]map[string]int,
 	owg *sync.WaitGroup) {
 
 	f, err := os.Create(ofName)
@@ -207,11 +269,23 @@ func output(
 			continue
 		}
 
-		_, found := (*domainSets)[result.ModTime]
+		// domainSets --> site: {date: {domains:bool}}
+		_, found := (*domainSets)[result.Site]
 		if found == false {
-			(*domainSets)[result.ModTime] = make(map[string]bool)
+			(*domainSets)[result.Site] = make(map[string]map[string]bool)
 		}
-		((*domainSets)[result.ModTime])[result.LoadDomain] = true
+		_, found = (*domainSets)[result.Site][result.ModTime]
+		if found == false {
+			(*domainSets)[result.Site][result.ModTime] = make(map[string]bool)
+		}
+		((*domainSets)[result.Site])[result.ModTime][result.LoadDomain] = true
+
+		// siteToDomains --> site: {domain:freq}
+		_, found = (*siteToDomains)[result.Site]
+		if found == false {
+			(*siteToDomains)[result.Site] = make(map[string]int)
+		}
+		(*siteToDomains)[result.Site][result.LoadDomain]++
 	}
 
 	owg.Done()
