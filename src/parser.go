@@ -94,8 +94,8 @@ func getAlexaSites(csvfilename string) map[string]bool {
 
 func main() {
 
-	if len(os.Args) != 2 {
-		log.Error("Usage: ./parser path/to/folder_with_sites")
+	if len(os.Args) != 3 {
+		log.Error("Usage: ./parser path/to/folder_with_sites bool_adblock")
 		return
 	}
 
@@ -104,6 +104,10 @@ func main() {
 	alexaTop := getAlexaSites("../input/alexa.csv")
 	filenameChan := make(chan fileInformation)
 	resultChan := make(chan parsedData)
+	IsAdBlockPresent := false
+	if os.Args[2] == "1" {
+		IsAdBlockPresent = true
+	}
 
 	rootPath := os.Args[1]
 
@@ -162,12 +166,15 @@ func main() {
 	owg.Wait()
 
 	// Graphs and intermediate output files -->
+
+	//Create output folder
 	GraphFolderPath := "../output/"
 	if _, err := os.Stat(GraphFolderPath); os.IsNotExist(err) {
 		log.Info("Creating: ", GraphFolderPath)
 		os.Mkdir(GraphFolderPath, 0777)
 	}
 
+	// Create siteToDomain intermediate result csv
 	siteToDomainscsv, err := os.Create("../output/siteToDomains_" + identifier + ".csv")
 	if err != nil {
 		log.Error("Cannot create file: ", err)
@@ -175,6 +182,15 @@ func main() {
 	defer siteToDomainscsv.Close()
 	writer := csv.NewWriter(siteToDomainscsv)
 	defer writer.Flush()
+
+	// Create domain set sizes over time intermediate result csv
+	domainVariancecsv, err := os.Create("../output/DomainSetVariance_" + identifier + ".csv")
+	if err != nil {
+		log.Error("Cannot create file: ", err)
+	}
+	defer domainVariancecsv.Close()
+	writerVariance := csv.NewWriter(domainVariancecsv)
+	defer writerVariance.Flush()
 
 	for site := range siteToDomains {
 		_, found := alexaTop[site]
@@ -194,13 +210,52 @@ func main() {
 				log.Error("plotting error")
 			}
 			bar.Render(graph)
+
+			// domainSets --> site: {date: {domains:bool}}
+			dateToDomains := domainSets[site]
+			days := make([]string, 0, len(dateToDomains))
+			DomainsetSizes := make([]int, 0, len(dateToDomains))
+
+			for day := range dateToDomains {
+				days = append(days, day)
+			}
+			sort.Strings(days)
+
+			for _, day := range days {
+				for domain := range dateToDomains[day] {
+					log.Info("Date: ", day, "Domain: ", domain)
+				}
+				DomainsetSizes = append(DomainsetSizes, len(dateToDomains[day]))
+			}
+
+			graphName = path.Join(GraphFolderPath, identifier+"_bar"+"_domainset_variance_"+site+".html")
+			log.Info("Creating graph: ", graphName)
+			bar = charts.NewBar()
+			bar.SetGlobalOptions(charts.TitleOpts{Title: "Domain set variance over time for: " + site, Bottom: "0%"})
+			bar.AddXAxis(days).AddYAxis("Total # of domains seen", DomainsetSizes)
+			bar.XYReversal()
+			graph, err = os.Create(graphName)
+			if err != nil {
+				log.Error("plotting error", err)
+			}
+			bar.Render(graph)
 		}
 
 		for domain, counter := range siteToDomains[site] {
-			siteToDomainscsvEntry := []string{site, domain, strconv.Itoa(counter)}
+			siteToDomainscsvEntry := []string{site, domain, strconv.Itoa(counter), strconv.FormatBool(IsAdBlockPresent)}
 			err := writer.Write(siteToDomainscsvEntry)
 			if err != nil {
 				log.Error("Cannot write to siteToDomain csv file", err)
+			}
+		}
+
+		for date, domains := range domainSets[site] {
+			for domain := range domains {
+				VarianceCSVEntry := []string{site, date, domain, strconv.Itoa(len(domains))}
+				err := writerVariance.Write(VarianceCSVEntry)
+				if err != nil {
+					log.Error("Cannot write to DomainVariance csv file", err)
+				}
 			}
 		}
 	}
