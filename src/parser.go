@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -67,7 +68,7 @@ func rankbyDomainCount(domainCounts map[string]int) ([]string, []float64) {
 
 func getAlexaSites(csvfilename string) map[string]bool {
 	csvfile, err := os.Open(csvfilename)
-	alexaTopFifty := make(map[string]bool)
+	alexaTop := make(map[string]bool)
 	if err != nil {
 		log.Error("Couldn't open the csv file", err)
 	}
@@ -82,13 +83,13 @@ func getAlexaSites(csvfilename string) map[string]bool {
 			log.Fatal(error)
 		}
 		log.Info("line: ", line)
-		if line[0] == "50" {
+		if line[0] == "100" {
 			break
 		}
-		alexaTopFifty[line[1]] = true
+		alexaTop[line[1]] = true
 	}
 
-	return alexaTopFifty
+	return alexaTop
 }
 
 func main() {
@@ -100,7 +101,7 @@ func main() {
 
 	log.Info("Start")
 
-	alexaTopFifty := getAlexaSites("../input/alexa.csv")
+	alexaTop := getAlexaSites("../input/alexa.csv")
 	filenameChan := make(chan fileInformation)
 	resultChan := make(chan parsedData)
 
@@ -139,9 +140,6 @@ func main() {
 			log.Error(err, pathSub)
 			continue
 		}
-		// sort.Slice(subdirs, func(i, j int) bool {
-		// 	return subdirs[i].ModTime().Before(subdirs[j].ModTime())
-		// })
 
 		for _, subdir := range subdirs {
 			fileInfo := fileInformation{
@@ -159,12 +157,26 @@ func main() {
 	close(resultChan)
 	owg.Wait()
 
+	// Graphs and intermediate output files -->
 	GraphFolderPath := "../output/"
+	if _, err := os.Stat(GraphFolderPath); os.IsNotExist(err) {
+		log.Info("Creating: ", GraphFolderPath)
+		os.Mkdir(GraphFolderPath, 0777)
+	}
+
+	siteToDomainscsv, err := os.Create("../output/siteToDomains_" + now + "_" + last[len(last)-1] + ".csv")
+	if err != nil {
+		log.Error("Cannot create file: ", err)
+	}
+	defer siteToDomainscsv.Close()
+	writer := csv.NewWriter(siteToDomainscsv)
+	defer writer.Flush()
 
 	for site := range siteToDomains {
-		_, found := alexaTopFifty[site]
+		_, found := alexaTop[site]
+
 		if found {
-			graphName := path.Join(GraphFolderPath, "bar"+"_plf_fraction_"+site+"_.html")
+			graphName := path.Join(GraphFolderPath, now+"_"+last[len(last)-1]+"_bar"+"_plf_fraction_"+site+"_.html")
 			log.Info("Creating graph: ", graphName)
 			domainCounts := siteToDomains[site]
 			domains, counters := rankbyDomainCount(domainCounts)
@@ -178,6 +190,14 @@ func main() {
 				log.Error("plotting error")
 			}
 			bar.Render(graph)
+		}
+
+		for domain, counter := range siteToDomains[site] {
+			siteToDomainscsvEntry := []string{site, domain, strconv.Itoa(counter)}
+			err := writer.Write(siteToDomainscsvEntry)
+			if err != nil {
+				log.Error("Cannot write to siteToDomain csv file", err)
+			}
 		}
 	}
 
