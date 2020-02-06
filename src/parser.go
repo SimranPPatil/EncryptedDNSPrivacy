@@ -117,9 +117,13 @@ func main() {
 
 	now := time.Now().Format("01-02-2006")
 	last := strings.Split(rootPath, "/")
+	identifier := now + "_" + last[len(last)-1]
+	if len(last[len(last)-1]) == 0 {
+		identifier = now + "_" + last[len(last)-2]
+	}
 
 	owg.Add(1)
-	go output(resultChan, now+"_"+last[len(last)-1]+"_output.json", &domainSets, &siteToDomains, &owg)
+	go output(resultChan, "../output/"+identifier+"_output.json", &domainSets, &siteToDomains, &owg)
 
 	for i := 0; i < WORKERS; i++ {
 		wg.Add(1)
@@ -164,7 +168,7 @@ func main() {
 		os.Mkdir(GraphFolderPath, 0777)
 	}
 
-	siteToDomainscsv, err := os.Create("../output/siteToDomains_" + now + "_" + last[len(last)-1] + ".csv")
+	siteToDomainscsv, err := os.Create("../output/siteToDomains_" + identifier + ".csv")
 	if err != nil {
 		log.Error("Cannot create file: ", err)
 	}
@@ -176,7 +180,7 @@ func main() {
 		_, found := alexaTop[site]
 
 		if found {
-			graphName := path.Join(GraphFolderPath, now+"_"+last[len(last)-1]+"_bar"+"_plf_fraction_"+site+"_.html")
+			graphName := path.Join(GraphFolderPath, identifier+"_bar"+"_plf_fraction_"+site+".html")
 			log.Info("Creating graph: ", graphName)
 			domainCounts := siteToDomains[site]
 			domains, counters := rankbyDomainCount(domainCounts)
