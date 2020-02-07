@@ -221,11 +221,13 @@ func main() {
 			}
 			sort.Strings(days)
 
+			domainCummulativeSet := make(map[string]bool)
 			for _, day := range days {
+
 				for domain := range dateToDomains[day] {
-					log.Info("Date: ", day, "Domain: ", domain)
+					domainCummulativeSet[domain] = true
 				}
-				DomainsetSizes = append(DomainsetSizes, len(dateToDomains[day]))
+				DomainsetSizes = append(DomainsetSizes, len(domainCummulativeSet))
 			}
 
 			graphName = path.Join(GraphFolderPath, identifier+"_bar"+"_domainset_variance_"+site+".html")
