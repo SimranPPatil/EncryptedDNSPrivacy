@@ -43,16 +43,19 @@ type kv struct {
 	Value int
 }
 
-func rankbyDomainCount(domainCounts map[string]int) ([]string, []float64) {
+func rankbyDomainCount(domainstoDays map[string]map[string]bool) ([]string, []float64) {
 
 	var ss []kv
-	var totalOccurrences = 0
-	domains := make([]string, 0, len(domainCounts))
-	counters := make([]float64, 0.0, len(domainCounts))
-	for k, v := range domainCounts {
-		totalOccurrences += v
-		ss = append(ss, kv{k, v})
+	totalOccurrencesSet := make(map[string]bool)
+	domains := make([]string, 0, len(domainstoDays))
+	occurrences := make([]float64, 0.0, len(domainstoDays))
+	for k, v := range domainstoDays {
+		for day := range v {
+			totalOccurrencesSet[day] = true
+		}
+		ss = append(ss, kv{k, len(v)})
 	}
+	totalOccurrences := len(totalOccurrencesSet)
 
 	sort.Slice(ss, func(i, j int) bool {
 		return ss[i].Value > ss[j].Value
@@ -60,10 +63,10 @@ func rankbyDomainCount(domainCounts map[string]int) ([]string, []float64) {
 
 	for _, kv := range ss {
 		domains = append(domains, kv.Key)
-		counters = append(counters, float64(kv.Value)/float64(totalOccurrences))
+		occurrences = append(occurrences, float64(kv.Value)/float64(totalOccurrences))
 	}
 
-	return domains, counters
+	return domains, occurrences
 }
 
 func getAlexaSites(csvfilename string) map[string]bool {
@@ -114,7 +117,7 @@ func main() {
 	WORKERS := 32
 
 	domainSets := make(map[string]map[string]map[string]bool)
-	siteToDomains := make(map[string]map[string]int)
+	siteToDomains := make(map[string]map[string]map[string]bool)
 
 	var wg sync.WaitGroup
 	var owg sync.WaitGroup
@@ -198,12 +201,13 @@ func main() {
 		if found {
 			graphName := path.Join(GraphFolderPath, identifier+"_bar"+"_plf_fraction_"+site+".html")
 			log.Info("Creating graph: ", graphName)
-			domainCounts := siteToDomains[site]
-			domains, counters := rankbyDomainCount(domainCounts)
+			// siteToDomains --> site: {domain: {days:bool}}
+			domainstoDays := siteToDomains[site]
+			domains, occurrences := rankbyDomainCount(domainstoDays)
 
 			bar := charts.NewBar()
 			bar.SetGlobalOptions(charts.TitleOpts{Title: site, Bottom: "0%"}, charts.ToolboxOpts{Show: false})
-			bar.AddXAxis(domains).AddYAxis("Fraction of PLF per domain", counters)
+			bar.AddXAxis(domains).AddYAxis("Fraction of page loads with the domain present", occurrences)
 			bar.XYReversal()
 			graph, err := os.Create(graphName)
 			if err != nil {
@@ -244,7 +248,7 @@ func main() {
 		}
 
 		for domain, counter := range siteToDomains[site] {
-			siteToDomainscsvEntry := []string{site, domain, strconv.Itoa(counter), strconv.FormatBool(IsAdBlockPresent)}
+			siteToDomainscsvEntry := []string{site, domain, strconv.Itoa(len(counter)), strconv.FormatBool(IsAdBlockPresent)}
 			err := writer.Write(siteToDomainscsvEntry)
 			if err != nil {
 				log.Error("Cannot write to siteToDomain csv file", err)
@@ -333,7 +337,7 @@ func output(
 	resultChan chan parsedData,
 	ofName string,
 	domainSets *map[string]map[string]map[string]bool,
-	siteToDomains *map[string]map[string]int,
+	siteToDomains *map[string]map[string]map[string]bool,
 	owg *sync.WaitGroup) {
 
 	f, err := os.Create(ofName)
@@ -361,12 +365,16 @@ func output(
 		}
 		((*domainSets)[result.Site])[result.ModTime][result.LoadDomain] = true
 
-		// siteToDomains --> site: {domain:freq}
+		// siteToDomains --> site: {domain: {days:bool}}
 		_, found = (*siteToDomains)[result.Site]
 		if found == false {
-			(*siteToDomains)[result.Site] = make(map[string]int)
+			(*siteToDomains)[result.Site] = make(map[string]map[string]bool)
 		}
-		(*siteToDomains)[result.Site][result.LoadDomain]++
+		_, found = (*siteToDomains)[result.Site][result.LoadDomain]
+		if found == false {
+			(*siteToDomains)[result.Site][result.LoadDomain] = make(map[string]bool)
+		}
+		(*siteToDomains)[result.Site][result.LoadDomain][result.ModTime] = true
 	}
 
 	owg.Done()
