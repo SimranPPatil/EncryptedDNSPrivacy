@@ -46,10 +46,11 @@ async def batch_reader(file, rows_to_insert, rows_to_be_processed):
             print("ip_ob: " , domain, ip_obtained)
             rows_to_insert.append((domain, domain))
         except:
-            if 'data' in data and 'answers' in data['data'] and data['data']['answers']:
-                for a in data['data']['answers']:
+            if 'data' in data and 'ipv4_addresses' in data['data']:
+                for a in data['data']['ipv4_addresses']:
+                    print("a: ", a)
                     try:
-                        rows_to_insert.append((domain, a['answer'].strip('.')))
+                        rows_to_insert.append((domain, a))
                     except Exception as e:
                         rows_to_be_processed.append((domain, str(e)))
             else:
@@ -66,7 +67,7 @@ def batch(iterable, n=1):
         yield iterable[ndx:min(ndx + n, l)]
 
 async def process(rows_to_insert, rows_to_be_processed):
-    proc = await asyncio.create_subprocess_exec(ZDNS, "A", "-retries", "6",  "-iterative",
+    proc = await asyncio.create_subprocess_exec(ZDNS, "ALOOKUP", "-retries", "6",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
                     
     await asyncio.gather(

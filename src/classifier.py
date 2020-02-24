@@ -8,7 +8,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction import FeatureHasher
 from sklearn.ensemble import RandomForestRegressor
+import ipaddress
 
+# TODO:
+# zdns pipeline
+# what all graphs from bq
 
 # Class to extract a Resource Object
 class Resource:
@@ -51,17 +55,48 @@ if __name__ == "__main__":
 
     # Pandas to create dataframes
     json_data = pd.read_json(sys.argv[1], lines=True)
+    grp = pd.DataFrame(json_data.groupby(['Site']))
+    site_to_ipset = dict()
+    ip_count = dict()
+    for key in json_data.groupby(['Site']).groups:
+        values = json_data.groupby(['Site']).groups[key]
+        site_to_ipset[key] = set(json_data.take(values)["RemoteIPAddr"])
+        for ip in site_to_ipset[key]:
+            ip_count.setdefault(ip,0)
+            ip_count[ip]+= 1
 
+    sorted_ip = sorted(ip_count.items(), key=lambda x: x[1], reverse=True)
+    highest_ips = set()
+    i = 0
+    for key,value in sorted_ip:
+        if i < len(sorted_ip)/3:
+            highest_ips.add(key.strip())
+            i+=1
+
+    ohe = OneHotEncoder(categories='auto')
+    ip_feature_arr = ohe.fit_transform([list(highest_ips)]).toarray()
+    print(ip_feature_arr)
+    df = pd.DataFrame.from_dict(site_to_ipset, orient='index')
+    df.reset_index(inplace=True)
+    df.rename(columns={'index':'Site'}, inplace=True)
+    labels = df[['Site']]
+    features = df.drop(columns=['Site'])
+    fh = pd.get_dummies(features)
+    print(fh.iloc[1:4])
+    # Split the data into test and train randomly (80-20)
+    train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.2)
+
+    '''
+    # FeatureHasher -->
     fh = FeatureHasher(n_features=20, input_type='string')
     hashed_features = fh.fit_transform(json_data['RemoteIPAddr'])
     hashed_features = hashed_features.toarray()
     labels = json_data[['Site']]
     features = pd.DataFrame(hashed_features)
-    
+    print(hashed_features)
     # Split the data into test and train randomly (80-20)
     train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.2)
 
-    '''
     # Unique labels for ip_addresses
     le = LabelEncoder()
     ip_labels = le.fit_transform(json_data['RemoteIPAddr'])
@@ -88,7 +123,9 @@ if __name__ == "__main__":
     
     # Split the data into test and train randomly (80-20)
     train, test = train_test_split(df, test_size=0.2)
+    print(train_features.shape, test_features.shape)
     '''
+
     print(train_features.shape, test_features.shape)
     # Instantiate model with 1000 decision trees
     clf = RandomForestClassifier(max_depth=5, n_estimators=10)
