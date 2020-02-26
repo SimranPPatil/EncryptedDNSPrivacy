@@ -266,11 +266,11 @@ if __name__ == "__main__":
     bq_domain2ip_process_table = "domain2ip_to_process"
     bq_domain_list = "domain_list"
     
-    # try:
-    #     create_bq_table(dataset_id, bq_table_to_be_updated)
-    # except Exception as e:
-    #     print(e)
-    #     exit()
+    try:
+        create_bq_table(dataset_id, bq_table_to_be_updated)
+    except Exception as e:
+        print(e)
+        exit()
     
     # get_domain_list(project_id, dataset_id, bq_table_to_be_updated, bq_domain2ip_table, bq_domain_list)
     fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_table)
@@ -286,7 +286,7 @@ if __name__ == "__main__":
     for row in batch(rows_to_insert, 1000):
         try:
             errors = client.insert_rows(table, row)
-            print("errors: ", errors)
+            print("rti errors: ", errors)
         except Exception as e:
             print("Insert row exception: ", e)
 
@@ -297,6 +297,6 @@ if __name__ == "__main__":
     for row in batch(rows_to_be_processed, 1000):
         try:
             errors = client.insert_rows(table, row)
-            print("errors: ", errors)
+            print("rtp errors: ", errors)
         except Exception as e:
             print("Insert row process exception: ", e)
