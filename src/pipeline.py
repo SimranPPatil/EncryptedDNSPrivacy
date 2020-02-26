@@ -172,7 +172,7 @@ def fetch_distinct_domains(dataset_id, bq_table_to_be_updated, bq_domain2ip_tabl
     query_str = "select domain from (select distinct(site_domain) as domain \
                 from `{}.{}` union distinct select distinct(load_domain) as domain \
                 from `{}.{}`)sub where domain not in \
-                (select domain from `{}.{}`) limit 10".format(
+                (select domain from `{}.{}`)".format(
                 dataset_id, bq_table_to_be_updated,
                 dataset_id, bq_table_to_be_updated, 
                 dataset_id, bq_domain2ip_table)
