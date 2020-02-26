@@ -12,11 +12,11 @@ from google.cloud import bigquery
 from google.cloud import bigquery_storage_v1beta1
 from IPy import IP
 
-ZDNS = expanduser("~/go/bin/zdns")
+ZDNS = expanduser("/home/nikita/go/bin/zdns")
 BATCH_SIZE = 100
 
-async def batch_writer(file_in):
-    async with aiofiles.open("temp.csv", "r") as csv:
+async def batch_writer(file_in, bq_table_to_be_updated):
+    async with aiofiles.open(str(bq_table_to_be_updated)+".txt", "r") as csv:
         new_cnt = 0
         async for entry in csv:
             try:
@@ -66,12 +66,12 @@ def batch(iterable, n=1):
     for ndx in range(0, l, n):
         yield iterable[ndx:min(ndx + n, l)]
 
-async def process(rows_to_insert, rows_to_be_processed):
-    proc = await asyncio.create_subprocess_exec(ZDNS, "ALOOKUP", "-retries", "6",  "-iterative",
+async def process(rows_to_insert, rows_to_be_processed, bq_table_to_be_updated):
+    proc = await asyncio.create_subprocess_exec(ZDNS, "ALOOKUP", "-retries", "3",  "-iterative",
                                                 stdout=PIPE, stdin=PIPE, limit=2**20)
                     
     await asyncio.gather(
-        batch_writer(proc.stdin),
+        batch_writer(proc.stdin, bq_table_to_be_updated),
         batch_reader(proc.stdout, rows_to_insert, rows_to_be_processed))
     
     print("len of rows to insert: " , len(rows_to_insert))    
@@ -277,7 +277,7 @@ if __name__ == "__main__":
 
     rows_to_insert = []
     rows_to_be_processed = []
-    asyncio.run(process(rows_to_insert, rows_to_be_processed))
+    asyncio.run(process(rows_to_insert, rows_to_be_processed, bq_table_to_be_updated))
 
     client = bigquery.Client()
     table_ref = client.dataset(dataset_id).table(bq_domain2ip_table)
