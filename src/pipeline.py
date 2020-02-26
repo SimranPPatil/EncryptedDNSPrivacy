@@ -293,6 +293,7 @@ if __name__ == "__main__":
     table_ref = client.dataset(dataset_id).table(bq_domain2ip_process_table)
     table = client.get_table(table_ref) 
 
+    print("rows_to_be_processed: ", len(rows_to_be_processed))
     for row in batch(rows_to_be_processed, 1000):
         try:
             errors = client.insert_rows(table, row)
