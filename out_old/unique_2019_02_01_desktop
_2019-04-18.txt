@@ -1,7 +1,0 @@
-http://www.prodentclinic.ro/,www.prodentclinic.ro,89.42.216.152,{'image/jpeg', 'image/png', 'application/javascript'},{'TurboBytes'}
-http://www.prodentclinic.ro/,www.google.com,216.58.192.132,{'image/png'}, CDN missing 
-http://www.prodentclinic.ro/,embed.tawk.to,104.17.104.89,{'application/x-javascript'}, CDN missing 
-http://www.prodentclinic.ro/,embed.tawk.to,104.17.105.89,{'application/x-javascript'}, CDN missing 
-http://www.prodentclinic.ro/,embed.tawk.to,104.17.106.89,{'application/x-javascript'}, CDN missing 
-http://www.prodentclinic.ro/,embed.tawk.to,104.17.102.89,{'application/x-javascript'}, CDN missing 
-http://www.prodentclinic.ro/,embed.tawk.to,104.17.103.89,{'application/x-javascript'}, CDN missing 
