@@ -158,7 +158,10 @@ func main() {
 				fileName:  path.Join(rootPath, dir.Name(), subdir.Name(), "resource_metadata.json"),
 				fileCTime: strings.Split(subdir.ModTime().String(), " ")[0],
 			}
-			filenameChan <- fileInfo
+			if fileInfo.fileCTime > "2020-02-25" {
+				log.Info("Modtime of the file: ", fileInfo.fileCTime)
+				filenameChan <- fileInfo
+			}
 		}
 	}
 
