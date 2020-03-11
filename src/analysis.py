@@ -15,6 +15,7 @@ domain2ip = 'domain2ip'
 table_analyzed = sys.argv[2]
 site_domains = table_analyzed+'_site_domains'
 ip_anonsets = table_analyzed+'_ip_anonsets'
+site_ip_anonsets = 'site_ip_anonsets'
 
 def getQuery():
     with open(sys.argv[1], "r") as f:
@@ -25,7 +26,8 @@ def getQuery():
                 table_analyzed=table_analyzed, 
                 site_domains=site_domains,
                 ip_anonsets=ip_anonsets,
-                domain2ip=domain2ip)
+                domain2ip=domain2ip,
+                site_ip_anonsets=site_ip_anonsets)
             print(query_str + '\n')
             executeQuery(query_str, i)
 
